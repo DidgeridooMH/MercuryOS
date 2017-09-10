@@ -10,3 +10,6 @@ all:
 
 	@echo "Compiling os.c"
 	i686-elf-gcc -c x86/os.c -o ../build/obj/os.o -std=gnu99 -ffreestanding -O2 -Wall -Wextra
+
+	@echo "Compiling gdt.c"
+	i686-elf-gcc -c kernel/gtd.c -o ../build/obj/gtd.o -std=gnu99 -ffreestanding -O2 -Wall -Wextra

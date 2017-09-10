@@ -14,5 +14,9 @@ void kmain(void) {
 	/* Initialize terminal interface */
 	terminal_initialize();
 
-	terminal_writestring("Project Mercury Pre-Alpha Build\n\n[username]@[machinename]|/home:");
+	/* Initialize GDT */
+	terminal_writestring("Overwriting GDT...\n");
+	gdt_install();
+
+	terminal_writestring("\nProject Mercury Pre-Alpha Build\n\n[username]@[machinename]|/home:");
 }

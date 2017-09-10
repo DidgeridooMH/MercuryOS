@@ -25,12 +25,24 @@ _start:
     /* Setup stack register */
     mov $stack_top, %esp
 
-    /* GDT WILL GO HERE */
-
     call kmain
 
     cli
 1:  hlt
     jmp 1b
+
+.global gdt_flush
+.extern gp
+gdt_flush:
+    lgdt (gp)
+    mov $0x10, %ax
+    mov %ax, %ds
+    mov %ax, %es
+    mov %ax, %fs
+    mov %ax, %gs
+    mov %ax, %ss
+    jmp $0x08, $flush2
+flush2:
+    ret
 
 .size _start, . - _start
