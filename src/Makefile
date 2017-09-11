@@ -13,3 +13,6 @@ all:
 
 	@echo "Compiling gdt.c"
 	i686-elf-gcc -c kernel/gdt.c -o ../build/obj/gdt.o -std=gnu99 -ffreestanding -O2 -Wall -Wextra
+
+	@echo "Compiling idt.c"
+	i686-elf-gcc -c kernel/idt.c -o ../build/obj/idt.o -std=gnu99 -ffreestanding -O2 -Wall -Wextra
