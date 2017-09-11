@@ -19,5 +19,7 @@ void kmain(void) {
 	terminal_writestring_s("Overwriting GDT...\n", VGA_COLOR_LIGHT_BLUE, VGA_COLOR_BLACK);
 	gdt_install();
 
+	/* Initialize IDT */
+
 	terminal_writestring("\nProject Mercury Pre-Alpha Build\n\n[username]@[machinename]|/home: ");
 }

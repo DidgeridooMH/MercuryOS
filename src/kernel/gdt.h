@@ -1,5 +1,5 @@
-#ifndef GTD_H
-#define GTD_H
+#ifndef GDT_H
+#define GDT_H
 
 #include "os.h"
 
