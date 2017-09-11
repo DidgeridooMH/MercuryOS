@@ -80,6 +80,24 @@ void terminal_writestring(const char* data) {
 	}
 }
 
+void terminal_writestring_s(const char* data,
+													enum vga_color fg,
+													enum vga_color bg) {
+	uint8_t color = terminal_color;
+	terminal_setcolor(vga_entry_color(fg, bg));
+
+	terminal_write(data, strlen(data));
+	if(terminal_column == VGA_WIDTH) {
+		terminal_updatecursor(terminal_row + 0x01, 0x0);
+	} else if(terminal_row == VGA_HEIGHT) {
+		terminal_updatecursor(0x0, 0x0);
+	} else {
+		terminal_updatecursor(terminal_row, terminal_column);
+	}
+
+	terminal_color = color;
+}
+
 void terminal_updatecursor(uint16_t row, uint16_t column) {
 	uint16_t position = (row * 80) + column;
 

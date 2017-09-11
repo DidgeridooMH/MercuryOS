@@ -1,4 +1,5 @@
 #include "kernel.h"
+#include "../drivers/video/vgaterminal.h"
 
 /* Check if the compiler thinks we are targeting the wrong operating system. */
 #if defined(__linux__)
@@ -15,8 +16,8 @@ void kmain(void) {
 	terminal_initialize();
 
 	/* Initialize GDT */
-	terminal_writestring("Overwriting GDT...\n");
+	terminal_writestring_s("Overwriting GDT...\n", VGA_COLOR_LIGHT_BLUE, VGA_COLOR_BLACK);
 	gdt_install();
 
-	terminal_writestring("\nProject Mercury Pre-Alpha Build\n\n[username]@[machinename]|/home:");
+	terminal_writestring("\nProject Mercury Pre-Alpha Build\n\n[username]@[machinename]|/home: ");
 }
