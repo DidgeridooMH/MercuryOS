@@ -27,8 +27,9 @@ void kmain(void) {
 	terminal_writestring_s("Installing ISR...\n", VGA_COLOR_LIGHT_BLUE, VGA_COLOR_BLACK);
 	isr_install();
 
-	terminal_writestring("\nProject Mercury Pre-Alpha Build\n\n[username]@[machinename]|/home: ");
+	terminal_clear();
 
+	terminal_writestring_s("\nProject Mercury v0.0.1a bAlpha...", VGA_COLOR_WHITE, VGA_COLOR_BLACK);
 	for(;;);
 
 }
