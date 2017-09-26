@@ -1,18 +1,25 @@
+C=i686-elf-gcc
+ASM=i686-elf-as
+FLAGS=-std=gnu99 -ffreestanding -O2 -Wno-all
+
 all:
 	@echo "Compiling multiboot.s"
-	i686-elf-as boot/multiboot.s -o ../build/obj/multiboot.o
+	$(ASM) boot/multiboot.s -o ../build/obj/multiboot.o
 
 	@echo "Compiling kernel.c"
-	i686-elf-gcc -c kernel/kernel.c -o ../build/obj/kernel.o -std=gnu99 -ffreestanding -O2 -Wall -Wextra
+	$(C) -c kernel/kernel.c -o ../build/obj/kernel.o $(FLAGS)
 
 	@echo "Compiling vgaterminal.c"
-	i686-elf-gcc -c drivers/video/vgaterminal.c -o ../build/obj/vgaterminal.o -std=gnu99 -ffreestanding -O2 -Wall -Wextra
+	$(C) -c drivers/video/vgaterminal.c -o ../build/obj/vgaterminal.o $(FLAGS)
 
 	@echo "Compiling os.c"
-	i686-elf-gcc -c x86/os.c -o ../build/obj/os.o -std=gnu99 -ffreestanding -O2 -Wall -Wextra
+	$(C) -c x86/os.c -o ../build/obj/os.o $(FLAGS)
 
 	@echo "Compiling gdt.c"
-	i686-elf-gcc -c kernel/gdt.c -o ../build/obj/gdt.o -std=gnu99 -ffreestanding -O2 -Wall -Wextra
+	$(C) -c kernel/gdt.c -o ../build/obj/gdt.o $(FLAGS)
 
 	@echo "Compiling idt.c"
-	i686-elf-gcc -c kernel/idt.c -o ../build/obj/idt.o -std=gnu99 -ffreestanding -O2 -Wall -Wextra
+	$(C) -c kernel/idt.c -o ../build/obj/idt.o $(FLAGS)
+
+	@echo "Compiling isr.c"
+	$(C) -c kernel/isr.c -o ../build/obj/isr.o $(FLAGS)

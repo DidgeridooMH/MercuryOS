@@ -7,9 +7,15 @@ size_t strlen(const char* str) {
 	return len;
 }
 
-void memset(void *src, int c, size_t size) {
-	unsigned char *srcp = src;
-	for(int i = 0; i < size; i++) {
-		srcp[i] = c;
-	}
+void *memcpy(void *dest, const void *src, size_t count) {
+    const char *sp = (const char *)src;
+    char *dp = (char *)dest;
+    for(; count != 0; count--) *dp++ = *sp++;
+    return dest;
+}
+
+void *memset(void *dest, char val, size_t count) {
+    char *temp = (char *)dest;
+    for( ; count != 0; count--) *temp++ = val;
+    return dest;
 }

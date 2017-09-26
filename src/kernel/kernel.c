@@ -20,6 +20,15 @@ void kmain(void) {
 	gdt_install();
 
 	/* Initialize IDT */
+	terminal_writestring_s("Loading IDT...\n", VGA_COLOR_LIGHT_BLUE, VGA_COLOR_BLACK);
+	idt_install();
+
+	/* Install ISR */
+	terminal_writestring_s("Installing ISR...\n", VGA_COLOR_LIGHT_BLUE, VGA_COLOR_BLACK);
+	isr_install();
 
 	terminal_writestring("\nProject Mercury Pre-Alpha Build\n\n[username]@[machinename]|/home: ");
+
+	for(;;);
+
 }

@@ -6,7 +6,15 @@
 #include <stdint.h>
 
 size_t strlen(const char* str);
-void memset(void *src, int c, size_t size);
+void *memset(void *dest, char val, size_t count);
+void *memcpy(void *dest, const void *src, size_t count);
+
+struct regs {
+	unsigned int gs, fs, es, ds;
+	unsigned int edi, esi, ebp, esp, ebx, edx, ecx, eax;
+	unsigned int int_no, err_code;
+	unsigned int eip, cs, eflags, useresp, ss;
+};
 
 static inline void outb(uint16_t port, uint8_t val) {
   asm volatile ( "outb %0, %1" : : "a"(val), "Nd"(port));
