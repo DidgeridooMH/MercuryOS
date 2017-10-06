@@ -23,3 +23,6 @@ all:
 
 	@echo "Compiling isr.c"
 	$(C) -c kernel/isr.c -o ../build/obj/isr.o $(FLAGS)
+
+	@echo "Compiling irq.c"
+	$(C) -c kernel/irq.c -o ../build/obj/irq.o $(FLAGS)

@@ -27,7 +27,11 @@ void kmain(void) {
 	terminal_writestring_s("Installing ISR...\n", VGA_COLOR_LIGHT_BLUE, VGA_COLOR_BLACK);
 	isr_install();
 
-	terminal_clear();
+	/* Install IRQ */
+	terminal_writestring_s("Installing IRQ...\n", VGA_COLOR_LIGHT_BLUE, VGA_COLOR_BLACK);
+	irq_install();
+
+	//terminal_clear();
 
 	terminal_writestring_s("\nProject Mercury v0.0.1a alpha...", VGA_COLOR_WHITE, VGA_COLOR_BLACK);
 	for(;;);

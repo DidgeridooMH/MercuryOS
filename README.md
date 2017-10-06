@@ -11,9 +11,11 @@ Mercury OS is a simple operating system used to learn about the different concep
 
 - [X] IRS implementation
 
-- [ ] IRQ implementation
+- [X] IRQ implementation
 
 - [ ] Basic keyboard driver
+
+- [ ] Basic Timer
 
 - [ ] Userland shell
 
