@@ -29,7 +29,7 @@ void kmain(void) {
 
 	terminal_clear();
 
-	terminal_writestring_s("\nProject Mercury v0.0.1a bAlpha...", VGA_COLOR_WHITE, VGA_COLOR_BLACK);
+	terminal_writestring_s("\nProject Mercury v0.0.1a alpha...", VGA_COLOR_WHITE, VGA_COLOR_BLACK);
 	for(;;);
 
 }
