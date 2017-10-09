@@ -11,3 +11,6 @@ all:
 
 	@echo "Compiling vga.c"
 	$(C) -c drivers/vga.c -o ../build/obj/vga.o $(FLAGS)
+
+	@echo "Compiling string.c"
+	$(C) -c runtime/string.c -o ../build/obj/string.o $(FLAGS)

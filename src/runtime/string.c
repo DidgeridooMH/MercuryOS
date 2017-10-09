@@ -10,9 +10,17 @@ int strlen(char *s) {
 
 int strcmp(const char *dst, char *src) {
   int n = strlen(dst);
+  int m = strlen(src);
+  
+  if(n > m) {
+    return 1;
+  } else if (n < m) {
+    return -1;
+  }
+
   for(int i = 0; i < n; i++) {
-    if(src[i] != dst[i]) {
-      if(src[i] > dst[i]) {
+    if(*src != *dst) {
+      if(*src > dst) {
         return -1;
       } else {
         return 1;
@@ -30,7 +38,7 @@ int strcpy(char *dst, const char *src) {
   return 0;
 }
 
-void strcat(void *dest,const void *src) {
+void strcat(char *dest,const char *src) {
   int n = strlen(dest);
   int m = strlen(src);
   for(int i = 0; i < m; i++) {
@@ -54,32 +62,4 @@ int strncmp( const char* s1, const char* s2, int c ) {
 	}
 
 	return result;
-}
-
-char *strncpy(char *destString, const char *sourceString,int maxLength)
-{
-  unsigned count;
-
-  if ((destString == (char *) NULL) || (sourceString == (char *) NULL))
-	{
-	  return (destString = NULL);
-	}
-
-  if (maxLength > 255)
-	maxLength = 255;
-
-  for (count = 0; (int)count < (int)maxLength; count ++)
-	{
-	  destString[count] = sourceString[count];
-
-	  if (sourceString[count] == '\0')
-	break;
-	}
-
-  if (count >= 255)
-	{
-	  return (destString = NULL);
-	}
-
-  return (destString);
 }
