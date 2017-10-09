@@ -1,12 +1,12 @@
 all:
 	@echo "Building object files..."
 	make -C ./src
-	i686-elf-gcc -T src/linker.ld -o build/mercuryos.bin -ffreestanding -O2 -nostdlib build/obj/*.o -lgcc
+	ld -T src/linker.ld -m elf_i386 -o build/kernel.bin build/obj/*.o
 
 run:
 	@echo "Starting OS..."
-	qemu-system-i386 -kernel build/mercuryos.bin
+	qemu-system-i386 -kernel build/kernel.bin
 
 clean:
 	rm build/obj/*.o
-	rm build/mercuryos.bin
+	rm build/kernel.bin
