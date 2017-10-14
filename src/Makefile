@@ -1,6 +1,6 @@
 C=i686-elf-gcc
 ASM=nasm
-FLAGS=-std=gnu99 -ffreestanding -O2 -Wno-all
+FLAGS=-std=gnu99 -ffreestanding -O2 -Wno-all -masm=intel
 
 all:
 	@echo "Compiling multiboot.s"

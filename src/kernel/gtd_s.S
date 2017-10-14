@@ -2,7 +2,6 @@
 global gdt_set
 extern gdt
 gdt_set:
-;  xchg bx, bx
   lgdt [gdt]
   mov ax, 0x10
   mov ds, ax
