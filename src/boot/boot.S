@@ -1,11 +1,9 @@
 [BITS 32]
 global start
 
-extern kmain
-
 start:
   mov esp, sys_stack
-  call kmain
+  jmp boot
 
 ALIGN 4
 multiboot:
@@ -26,6 +24,11 @@ multiboot:
   dd bss
   dd end
   dd start
+
+boot:
+  extern kmain
+  call kmain
+  jmp $
 
 SECTION .bss
   resb 8192

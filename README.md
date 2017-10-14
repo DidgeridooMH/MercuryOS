@@ -9,7 +9,7 @@ Mercury OS is a simple operating system used to learn about the different concep
 
 - [X] Basic terminal output
 
-- [ ] GDT implementation
+- [X] GDT implementation
 
 - [ ] IRS implementation
 
@@ -22,4 +22,3 @@ Mercury OS is a simple operating system used to learn about the different concep
 - [ ] Userland shell
 
 - [ ] Filesystem support
-
