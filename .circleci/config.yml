@@ -5,5 +5,4 @@ jobs:
       - image: didgeridoomh/mercuryos-primary:0.0.1
     steps:
       - checkout
-      - run: sudo apt install -y make
       - run: make
