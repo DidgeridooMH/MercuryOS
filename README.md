@@ -1,5 +1,5 @@
 <p align=center>
-<img src="https://github.com/didgeridoomh/mercuryos/raw/dev/resources/logo.png" alt="MercuryOS Logo" width="80%">
+<img src="https://github.com/didgeridoomh/mercuryos/raw/master/resources/logo.png" alt="MercuryOS Logo" width="80%">
 </p>
 
 Mercury OS is a simple operating system used to learn about the different concepts of OS design. It is written using C and Assembly and compiled using GCC. The kernel is loaded using GRUB. The objective is to make a lightweight, extensible platform that can run simple applications at high speeds.
