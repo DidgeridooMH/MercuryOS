@@ -1,0 +1,8 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: didgeridoomh/mercuryos-primary:0.0.1
+    steps:
+      - checkout
+      - run: make
