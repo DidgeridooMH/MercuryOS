@@ -9,5 +9,6 @@ jobs:
       - run: mkdir build/obj
       - run: git clone https://github.com/rm-hull/barebones-toolchain.git
       - run: cd barebones-toolchain
-      - run: setenv.sh
+      - run: I686_TOOLS=`pwd`/cross/`uname -m`/bin
+      - run: export PATH=$I686_TOOLS:$PATH
       - run: make
