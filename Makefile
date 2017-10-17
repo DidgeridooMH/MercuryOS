@@ -18,3 +18,5 @@ run-bochs:
 clean:
 	rm build/obj/*.o
 	rm build/kernel.bin
+	rm -r build/isodir
+	rm build/mos.iso

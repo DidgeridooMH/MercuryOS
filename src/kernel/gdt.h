@@ -11,7 +11,7 @@ struct gdt_entry {
 } __attribute__((packed));
 
 struct gdt_descriptor {
-  unsigned short    size;
+  unsigned short  size;
   unsigned int    offset;
 } __attribute__((packed));
 
