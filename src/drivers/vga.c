@@ -13,8 +13,8 @@ void vga_putchar(unsigned char c) {
     cursor_position.x = 81;
   } else {
     *dst = entry;
-
   }
+  
   if(cursor_position.x > 80) {
     cursor_position.x = 0;
     cursor_position.y++;
