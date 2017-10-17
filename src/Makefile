@@ -1,6 +1,6 @@
-C=i686-elf-gcc
+C=gcc
 ASM=nasm
-FLAGS=-std=gnu99 -ffreestanding -O2 -Wno-all -masm=intel
+FLAGS=-std=gnu99 -m32 -ffreestanding -O2 -Wno-all -masm=intel
 
 all:
 	@echo "Compiling multiboot.s"
@@ -8,6 +8,12 @@ all:
 
 	@echo "Compiling gtd_s.s"
 	$(ASM) -f elf32 -o ../build/obj/gtd_s.o kernel/gtd_s.S
+
+	@echo "Compiling idt_s.s"
+	$(ASM) -f elf32 -o ../build/obj/idt_s.o kernel/idt_s.S
+
+	@echo "Compiling idt_s.s"
+	$(ASM) -f elf32 -o ../build/obj/isr_s.o kernel/isr_s.S
 
 	@echo "Compiling kernel.c"
 	$(C) -c kernel/kernel.c -o ../build/obj/kernel.o $(FLAGS)
@@ -20,3 +26,12 @@ all:
 
 	@echo "Compiling gdt.c"
 	$(C) -c kernel/gdt.c -o ../build/obj/gdt.o $(FLAGS)
+
+	@echo "Compiling memory.c"
+	$(C) -c runtime/memory.c -o ../build/obj/memory.o $(FLAGS)
+
+	@echo "Compiling idt.c"
+	$(C) -c kernel/idt.c -o ../build/obj/idt.o $(FLAGS)
+
+	@echo "Compiling isr.c"
+	$(C) -c kernel/isr.c -o ../build/obj/isr.o $(FLAGS)

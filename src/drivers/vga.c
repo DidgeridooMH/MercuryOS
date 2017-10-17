@@ -3,7 +3,18 @@
 void vga_putchar(unsigned char c) {
   unsigned short entry = (color_mode.bg << 12) | (color_mode.fg << 8) | c;
   unsigned short* dst = vidmem + cursor_position.x + (cursor_position.y * video_mode.width);
-  *dst = entry;
+
+  /*
+  * If a new line character is to be written,
+  * simply place the cursor out of bounds to force
+  * it to move to the next line.
+  */
+  if(c == '\n') {
+    cursor_position.x = 81;
+  } else {
+    *dst = entry;
+  }
+  
   if(cursor_position.x > 80) {
     cursor_position.x = 0;
     cursor_position.y++;
