@@ -1,6 +1,6 @@
 C=gcc
 ASM=nasm
-FLAGS=-std=gnu99 -m32 -ffreestanding -O2 -Wno-all -masm=intel
+FLAGS=-std=gnu99 -m32 -ffreestanding -O2 -Wno-all -masm=intel -fno-pie
 
 all:
 	@echo "Compiling multiboot.s"
