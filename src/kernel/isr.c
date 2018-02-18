@@ -37,14 +37,15 @@ void isr_load() {
 
 void fault_handler(struct regs *r) {
   if(r->int_no < 32) {
+    printf("\n");
     if(r->int_no > 18) {
       printf(exception_messages[19]);
-      printf("Exception. System Halted!\n");
-      for(;;);
+      printf("\nException. System Halted!\n");
     } else {
       printf(exception_messages[r->int_no]);
-      printf("Exception. System Halted!\n");
-      for(;;);
+      printf("\nException. System Halted!\n");
     }
   }
+
+  halt();
 }

@@ -15,6 +15,9 @@ all:
 	@echo "Compiling idt_s.s"
 	$(ASM) -f elf32 -o ../build/obj/isr_s.o kernel/isr_s.S
 
+	@echo "Compiling idt_s.s"
+	$(ASM) -f elf32 -o ../build/obj/isq_s.o kernel/irq_s.S
+
 	@echo "Compiling kernel.c"
 	$(C) -c kernel/kernel.c -o ../build/obj/kernel.o $(FLAGS)
 
@@ -35,3 +38,6 @@ all:
 
 	@echo "Compiling isr.c"
 	$(C) -c kernel/isr.c -o ../build/obj/isr.o $(FLAGS)
+
+	@echo "Compiling irq.c"
+	$(C) -c kernel/irq.c -o ../build/obj/irq.o $(FLAGS)

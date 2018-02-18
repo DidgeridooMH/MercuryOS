@@ -49,9 +49,9 @@ make run-bochs
 
 - [X] GDT implementation
 
-- [ ] IRS implementation
+- [X] IRS implementation
 
-- [ ] IRQ implementation
+- [X] IRQ implementation
 
 - [ ] Basic keyboard driver
 
