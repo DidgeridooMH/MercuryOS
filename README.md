@@ -53,9 +53,13 @@ make run-bochs
 
 - [X] IRQ implementation
 
-- [ ] Basic keyboard driver
+- [X] Basic keyboard driver
 
-- [ ] Basic Timer
+- [X] Basic Timer
+
+- [ ] Refine keyboard driver
+
+- [ ] Extend and refine I/O drivers
 
 - [ ] Userland shell
 
