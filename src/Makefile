@@ -41,3 +41,6 @@ all:
 
 	@echo "Compiling irq.c"
 	$(C) -c kernel/irq.c -o ../build/obj/irq.o $(FLAGS)
+
+	@echo "Compiling timer.c"
+	$(C) -c kernel/timer.c -o ../build/obj/timer.o $(FLAGS)

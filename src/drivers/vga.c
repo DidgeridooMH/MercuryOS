@@ -6,7 +6,7 @@ void vga_putchar(unsigned char c) {
 
   /*
   * If a new line character is to be written,
-  * simply place the cursor out of bounds to force
+  * Simply place the cursor out of bounds to force
   * it to move to the next line.
   */
   if(c == '\n') {
@@ -14,7 +14,7 @@ void vga_putchar(unsigned char c) {
   } else {
     *dst = entry;
   }
-  
+
   if(cursor_position.x > 80) {
     cursor_position.x = 0;
     cursor_position.y++;

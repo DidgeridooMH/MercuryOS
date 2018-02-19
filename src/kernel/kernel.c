@@ -11,6 +11,9 @@ int kmain() {
   printf("IDT populated\n");
   irq_install();
   printf("IRQ Installed\n");
+  timer_install();
+  timer_phase(100);
+  printf("Timer has been initialized\n");
   printf("Mercury OS 0.0.2 Alpha\n");
 
   asm("sti");

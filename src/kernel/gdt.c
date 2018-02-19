@@ -18,8 +18,6 @@ void gdt_set_entry( int id,
 }
 
 void gdt_load(void) {
-    //asm("sti");
-
     gdt.size = (sizeof(struct gdt_entry) * 5) - 1;
     gdt.offset = &gdt_entries;
 
