@@ -14,6 +14,8 @@ int kmain() {
   timer_install();
   timer_phase(100);
   printf("Timer has been initialized\n");
+  keyboard_install();
+  printf("Keyboard irq initialized\n");
   printf("Mercury OS 0.0.2 Alpha\n");
 
   asm("sti");

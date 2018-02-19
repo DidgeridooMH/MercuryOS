@@ -8,10 +8,6 @@ void* irq_routines[16] = {
   0, 0, 0, 0, 0, 0, 0, 0
 };
 
-void outportb(unsigned short port, unsigned char data) {
-  __asm__ __volatile__ ("outb %0, %1" : : "dN" (port), "a" (data));
-}
-
 void irq0();
 void irq1();
 void irq2();

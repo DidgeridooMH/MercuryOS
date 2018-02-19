@@ -21,6 +21,9 @@ all:
 	@echo "Compiling kernel.c"
 	$(C) -c kernel/kernel.c -o ../build/obj/kernel.o $(FLAGS)
 
+	@echo "Compiling common.c"
+	$(C) -c drivers/common.c -o ../build/obj/common.o $(FLAGS)
+
 	@echo "Compiling vga.c"
 	$(C) -c drivers/vga.c -o ../build/obj/vga.o $(FLAGS)
 
@@ -44,3 +47,6 @@ all:
 
 	@echo "Compiling timer.c"
 	$(C) -c kernel/timer.c -o ../build/obj/timer.o $(FLAGS)
+
+	@echo "Compiling keyboard.c"
+	$(C) -c drivers/keyboard.c -o ../build/obj/keyboard.o $(FLAGS)
