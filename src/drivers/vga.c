@@ -34,11 +34,13 @@ void vga_set_cursor(int x, int y) {
 }
 
 void vga_clear(void) {
+  vga_set_cursor(0, 0);
   for(int y = 0; y < video_mode.height; y++) {
     for(int x = 0; x < video_mode.width; x++) {
       vga_putchar(' ');
     }
   }
+  vga_set_cursor(0, 0);
 }
 
 void vga_init(void) {

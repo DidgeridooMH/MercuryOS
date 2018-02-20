@@ -16,9 +16,16 @@ int kmain() {
   printf("Timer has been initialized\n");
   keyboard_install();
   printf("Keyboard irq initialized\n");
-  printf("Mercury OS 0.0.2 Alpha\n");
+  vga_clear();
+  printf("Mercury OS 0.0.2 Alpha\n\n");
 
   asm("sti");
+
+  while(1) {
+    if(get_keyboard_pointer() > 0) {
+      vga_putchar(keyboard_pull());
+    }
+  }
 
   halt();
 }
