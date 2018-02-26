@@ -1,5 +1,5 @@
 <p align=center>
-<img src="https://github.com/didgeridoomh/mercuryos/raw/master/resources/logo.png" alt="MercuryOS Logo" width="80%">
+<img src="https://github.com/didgeridoomh/mercuryos/raw/master/resources/mercury_new.png" alt="MercuryOS Logo" width="80%">
 </p>
 
 [![CircleCI](https://circleci.com/gh/DidgeridooMH/MercuryOS/tree/master.svg?style=shield&circle-token=:circle-token)](https://circleci.com/gh/DidgeridooMH/MercuryOS/tree/master)
