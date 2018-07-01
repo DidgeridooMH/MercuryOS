@@ -23,7 +23,8 @@ int kmain() {
 
   while(1) {
     if(get_keyboard_pointer() > 0) {
-      vga_putchar(keyboard_pull());
+      char keyPress = keyboard_pull();
+      vga_putchar(keyPress);
     }
   }
 
