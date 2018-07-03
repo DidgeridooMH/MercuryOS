@@ -53,3 +53,6 @@ all:
 
 	@echo "Compiling cursor.c"
 	$(C) -c drivers/cursor.c -o ../build/obj/cursor.o $(FLAGS)
+
+	@echo "Compiling shell.c"
+	$(C) -c shell/shell.c -o ../build/obj/shell.o $(FLAGS)

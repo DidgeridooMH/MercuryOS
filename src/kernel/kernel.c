@@ -2,10 +2,6 @@ void halt() {
   for(;;);
 }
 
-void process_command() {
-  printf("Command processed\n");
-}
-
 int kmain() {
   vga_init();
   printf("Video context loaded\n");
@@ -25,13 +21,23 @@ int kmain() {
 
   asm("sti");
 
+  char* command;
+  int command_index = 0;
+
   while(1) {
     if(get_keyboard_pointer() > 0) {
       char keyPress = keyboard_pull();
       vga_putchar(keyPress);
 
       if(keyPress == '\n') {
-        process_command();
+        command[command_index++] = '\0';
+        shell_process_command(command);
+        while(command_index >= 0) {
+          command[command_index--] = 0;
+        }
+        command_index = 0;
+      } else {
+        command[command_index++] = keyPress;
       }
     }
   }
