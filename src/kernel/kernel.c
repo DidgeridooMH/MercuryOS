@@ -2,6 +2,10 @@ void halt() {
   for(;;);
 }
 
+void process_command() {
+  printf("Command processed\n");
+}
+
 int kmain() {
   vga_init();
   printf("Video context loaded\n");
@@ -25,6 +29,10 @@ int kmain() {
     if(get_keyboard_pointer() > 0) {
       char keyPress = keyboard_pull();
       vga_putchar(keyPress);
+
+      if(keyPress == '\n') {
+        process_command();
+      }
     }
   }
 

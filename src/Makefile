@@ -50,3 +50,6 @@ all:
 
 	@echo "Compiling keyboard.c"
 	$(C) -c drivers/keyboard.c -o ../build/obj/keyboard.o $(FLAGS)
+
+	@echo "Compiling cursor.c"
+	$(C) -c drivers/cursor.c -o ../build/obj/cursor.o $(FLAGS)

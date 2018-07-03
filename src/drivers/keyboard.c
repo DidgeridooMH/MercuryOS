@@ -57,3 +57,7 @@ void keyboard_install() {
   irq_install_handler(1, keyboard_handler);
   memset(keyboard_buffer, 0, 512);
 }
+
+unsigned char get_char(int keycode) {
+  return kbdus[keycode];
+}

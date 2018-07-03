@@ -1,4 +1,5 @@
 #include "vga.h"
+#include "cursor.h"
 
 void vga_putchar(unsigned char c) {
   unsigned short entry = (color_mode.bg << 12) | (color_mode.fg << 8) | c;
@@ -21,6 +22,8 @@ void vga_putchar(unsigned char c) {
   } else {
     cursor_position.x++;
   }
+
+  vga_set_cursor(cursor_position.x, cursor_position.y);
 }
 
 void vga_set_color(char fg, char bg) {
@@ -31,6 +34,8 @@ void vga_set_color(char fg, char bg) {
 void vga_set_cursor(int x, int y) {
   cursor_position.x = x;
   cursor_position.y = y;
+
+  cursor_move(x, y);
 }
 
 void vga_clear(void) {
@@ -50,6 +55,8 @@ void vga_init(void) {
   vga_set_cursor(0, 0);
   vga_clear();
   vga_set_cursor(0, 0);
+
+  //cursor_enable(0, 0xFF);
 }
 
 void printf(char* str) {
