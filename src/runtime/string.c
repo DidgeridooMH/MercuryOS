@@ -11,7 +11,7 @@ int strlen(char *s) {
 int strcmp(const char *dst, char *src) {
   int n = strlen(dst);
   int m = strlen(src);
-  
+
   if(n > m) {
     return 1;
   } else if (n < m) {
@@ -19,14 +19,15 @@ int strcmp(const char *dst, char *src) {
   }
 
   for(int i = 0; i < n; i++) {
-    if(*src != *dst) {
-      if(*src > dst) {
+    if(src[i] != dst[i]) {
+      if(src[i] > dst[i]) {
         return -1;
       } else {
         return 1;
       }
     }
   }
+  
   return 0;
 }
 

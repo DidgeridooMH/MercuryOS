@@ -60,8 +60,9 @@ void vga_init(void) {
 }
 
 void printf(char* str) {
-  while(*str) {
-    vga_putchar(*str);
-    str++;
+  int index = 0;
+  while(str[index] != '\0') {
+    vga_putchar(str[index]);
+    index++;
   }
 }
