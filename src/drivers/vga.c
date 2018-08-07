@@ -12,6 +12,10 @@ void vga_putchar(unsigned char c) {
   */
   if(c == '\n') {
     cursor_position.x = 81;
+  } else if(c == '\b') {
+    *dst--;
+    *dst = 0;
+    cursor_position.x -= 2;
   } else {
     *dst = entry;
   }
