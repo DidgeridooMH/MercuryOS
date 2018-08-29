@@ -25,13 +25,16 @@ void shell_prompt() {
   memset(command, 0, 256);
   int command_index = 0;
   command[0] = '\0';
+  printf(">");
 
   while(1){
     if(get_keyboard_pointer() > 0) {
       char keyPress = keyboard_pull();
-      if(command_index > 0 && keyPress == '\b') {
-        vga_putchar(keyPress);
-        shell_remove_from_buffer(command, &command_index);
+      if(keyPress == '\b') {
+        if(command_index > 0) {
+          vga_putchar(keyPress);
+          shell_remove_from_buffer(command, &command_index);
+        }
       } else if(command_index < 255) {
         vga_putchar(keyPress);
         if(shell_update_buffer(command, &command_index, keyPress) == 1){

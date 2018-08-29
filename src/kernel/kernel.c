@@ -16,13 +16,12 @@ int kmain() {
   printf("Timer has been initialized\n");
   keyboard_install();
   printf("Keyboard irq initialized\n");
-  vga_clear();
+  //vga_clear();
   printf("Mercury OS 0.0.2 Alpha\n\n");
 
   asm("sti");
 
   while(1) {
-    printf(">");
     shell_prompt();
   }
 

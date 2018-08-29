@@ -9,7 +9,7 @@ all:
 
 run-qemu:
 	@echo "Starting os..."
-	qemu-system-i386 -cdrom build/mos.iso -monitor stdio
+	qemu-system-i386 -cdrom build/mos.iso
 
 run-bochs:
 	@echo "Starting OS..."
