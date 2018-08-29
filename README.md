@@ -57,10 +57,12 @@ make run-bochs
 
 - [X] Basic Timer
 
-- [ ] Refine keyboard driver
+- [X] Refine keyboard driver
 
-- [ ] Extend and refine I/O drivers
+- [ ] Extend and refine I/O drivers (Centralized Input and Output Function)
 
 - [ ] Userland shell
 
 - [ ] Filesystem support
+
+- [ ] Load ELF Executable
