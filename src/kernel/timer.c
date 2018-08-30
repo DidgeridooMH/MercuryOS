@@ -9,10 +9,6 @@ void timer_phase(int hz) {
 
 void timer_handler(struct regs *r) {
   timer_ticks++;
-
-  if(timer_ticks % 100 == 0) {
-    printf("One seconds has passed\n");
-  }
 }
 
 void timer_install() {
