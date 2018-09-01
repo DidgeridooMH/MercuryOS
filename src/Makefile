@@ -39,6 +39,9 @@ all:
 	@echo "Compiling memory.c"
 	$(C) -c runtime/memory.c -o ../build/obj/memory.o $(FLAGS)
 
+	@echo "Compiling itoa.c"
+	$(C) -c runtime/itoa.c -o ../build/obj/itoa.o $(FLAGS)
+
 	@echo "Compiling idt.c"
 	$(C) -c kernel/idt.c -o ../build/obj/idt.o $(FLAGS)
 

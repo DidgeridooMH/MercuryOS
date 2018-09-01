@@ -23,7 +23,10 @@ int kmain() {
 
   asm("sti");
 
-  asm("int 0x32");
+  char* buf;
+  int i = 30;
+  itoa(buf, i, 10);
+  printf(buf);
 
   while(1) {
     shell_prompt();

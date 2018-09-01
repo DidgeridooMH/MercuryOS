@@ -52,12 +52,12 @@ void strcat(char *dest,const char *src) {
 int strncmp( const char* s1, const char* s2, int n ) {
 	int result = 0;
 
-	while ( c  && result == 0) {
+	while ( n  && result == 0) {
 		result = *s1 - *s2;
-        
+
         s1++;
         s2++;
-		c--;
+		n--;
 	}
 
 	return result;
