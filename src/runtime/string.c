@@ -27,7 +27,7 @@ int strcmp(const char *dst, char *src) {
       }
     }
   }
-  
+
   return 0;
 }
 
@@ -49,16 +49,14 @@ void strcat(char *dest,const char *src) {
   return;
 }
 
-int strncmp( const char* s1, const char* s2, int c ) {
+int strncmp( const char* s1, const char* s2, int n ) {
 	int result = 0;
 
-	while ( c ) {
-		result = *s1 - *s2++;
-
-		if ( ( result != 0 ) || ( *s1++ == 0 ) ) {
-			break;
-		}
-
+	while ( c  && result == 0) {
+		result = *s1 - *s2;
+        
+        s1++;
+        s2++;
 		c--;
 	}
 
