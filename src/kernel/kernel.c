@@ -11,6 +11,8 @@ int kmain() {
   printf("IDT populated\n");
   irq_install();
   printf("IRQ Installed\n");
+  system_calls_install();
+  printf("System Calls Installed\n");
   timer_install();
   timer_phase(100);
   printf("Timer has been initialized\n");
@@ -20,6 +22,8 @@ int kmain() {
   printf("Mercury OS 0.0.2 Alpha\n\n");
 
   asm("sti");
+
+  asm("int 0x32");
 
   while(1) {
     shell_prompt();

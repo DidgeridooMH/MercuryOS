@@ -18,6 +18,9 @@ all:
 	@echo "Compiling idt_s.s"
 	$(ASM) -f elf32 -o ../build/obj/isq_s.o kernel/irq_s.S
 
+	@echo "Compiling system_calls.s"
+	$(ASM) -f elf32 -o ../build/obj/system_calls_s.o kernel/system_calls_s.S
+
 	@echo "Compiling kernel.c"
 	$(C) -c kernel/kernel.c -o ../build/obj/kernel.o $(FLAGS)
 
@@ -56,3 +59,6 @@ all:
 
 	@echo "Compiling shell.c"
 	$(C) -c shell/shell.c -o ../build/obj/shell.o $(FLAGS)
+
+	@echo "Compiling system_calls.c"
+	$(C) -c kernel/system_calls.c -o ../build/obj/system_calls.o $(FLAGS)
