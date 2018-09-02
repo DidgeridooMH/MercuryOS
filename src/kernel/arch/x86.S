@@ -1,6 +1,9 @@
 [BITS 32]
+
 global gdt_set
+
 extern gdt
+
 gdt_set:
   lgdt [gdt]
   mov ax, 0x10
@@ -8,7 +11,7 @@ gdt_set:
   mov es, ax
   mov fs, ax
   mov gs, ax
-  mov ss, ax
   jmp 0x08:reload_CS
+
 reload_CS:
   ret

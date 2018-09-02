@@ -1,4 +1,12 @@
 #include "irq.h"
+#include "idt.h"
+#include "system.h"
+#include "../drivers/common.h"
+
+void( *irq_routines[16])(struct regs*) = {
+  0, 0, 0, 0, 0, 0, 0, 0,
+  0, 0, 0, 0, 0, 0, 0, 0
+};
 
 void irq_install_handler(int irq, void (*handler)(struct regs *r)) {
   irq_routines[irq] = handler;
@@ -42,7 +50,7 @@ void irq_install() {
   idt_set_gate(47, (unsigned)irq15, 0x08, 0x8E);
 }
 
-void irq_handler(struct regs *r) {
+extern "C" void irq_handler(struct regs *r) {
   void (*handler)(struct regs *r);
 
   handler = irq_routines[r->int_no - 32];

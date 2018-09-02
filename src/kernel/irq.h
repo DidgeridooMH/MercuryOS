@@ -1,29 +1,22 @@
 #ifndef IRQ_H
 #define IRQ_H
 
-#include "system.h"
-
-void* irq_routines[16] = {
-  0, 0, 0, 0, 0, 0, 0, 0,
-  0, 0, 0, 0, 0, 0, 0, 0
-};
-
-void irq0();
-void irq1();
-void irq2();
-void irq3();
-void irq4();
-void irq5();
-void irq6();
-void irq7();
-void irq8();
-void irq9();
-void irq10();
-void irq11();
-void irq12();
-void irq13();
-void irq14();
-void irq15();
+extern "C" void irq0();
+extern "C" void irq1();
+extern "C" void irq2();
+extern "C" void irq3();
+extern "C" void irq4();
+extern "C" void irq5();
+extern "C" void irq6();
+extern "C" void irq7();
+extern "C" void irq8();
+extern "C" void irq9();
+extern "C" void irq10();
+extern "C" void irq11();
+extern "C" void irq12();
+extern "C" void irq13();
+extern "C" void irq14();
+extern "C" void irq15();
 
 void irq_install_handler(int irq, void (*handler)(struct regs *r));
 
@@ -33,6 +26,6 @@ void irq_remap(void);
 
 void irq_install();
 
-void irq_handler(struct regs *r);
+extern "C" void irq_handler(struct regs *r);
 
 #endif

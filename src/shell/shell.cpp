@@ -1,4 +1,8 @@
 #include "shell.h"
+#include "../runtime/memory.h"
+#include "../drivers/vga.h"
+#include "../drivers/keyboard.h"
+#include "../runtime/string.h"
 
 void shell_remove_from_buffer(char* buffer, int* index) {
   index[0]--;

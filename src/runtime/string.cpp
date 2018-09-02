@@ -8,7 +8,7 @@ int strlen(char *s) {
   return n;
 }
 
-int strcmp(const char *dst, char *src) {
+int strcmp(char *dst, char *src) {
   int n = strlen(dst);
   int m = strlen(src);
 
@@ -31,7 +31,7 @@ int strcmp(const char *dst, char *src) {
   return 0;
 }
 
-int strcpy(char *dst, const char *src) {
+int strcpy(char *dst, char *src) {
   int n = strlen(src);
   for(int i = 0; i < n; i++) {
     dst[i] = src[i];
@@ -39,7 +39,7 @@ int strcpy(char *dst, const char *src) {
   return 0;
 }
 
-void strcat(char *dest,const char *src) {
+void strcat(char *dest, char *src) {
   int n = strlen(dest);
   int m = strlen(src);
   for(int i = 0; i < m; i++) {

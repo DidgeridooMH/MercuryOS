@@ -1,6 +1,8 @@
 #ifndef IDT_H
 #define IDT_H
 
+#define IDT_BASE 0x00000000
+
 struct idt_entry {
   unsigned short  offset_low;
   unsigned short  selector;
@@ -14,15 +16,12 @@ struct idt_descriptor {
   unsigned int    base;
 } __attribute__((packed));
 
-struct idt_entry idt_entries[256];
-struct idt_descriptor idt;
-
 void idt_load();
 void idt_set_gate(  unsigned char id,
                     unsigned long base,
                     unsigned short sel,
                     unsigned char flags);
 
-void idt_set();
+extern "C" void idt_set();
 
 #endif

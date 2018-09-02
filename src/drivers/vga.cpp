@@ -1,8 +1,13 @@
 #include "vga.h"
 #include "cursor.h"
 
+static unsigned short* vidmem = (unsigned short*)0xB8000;
+
+struct bufmode video_mode;
+struct colormode color_mode;
+struct cursor cursor_position;
+
 void vga_putchar(unsigned char c) {
-  asm("cli");
   unsigned short entry = (color_mode.bg << 12) | (color_mode.fg << 8) | c;
   unsigned short* dst = vidmem + cursor_position.x + (cursor_position.y * video_mode.width);
 
@@ -14,7 +19,7 @@ void vga_putchar(unsigned char c) {
   if(c == '\n') {
     cursor_position.x = 80;
   } else if(c == '\b') {
-    *dst--;
+    dst--;
     *dst = entry & ~0xFF;
     cursor_position.x--;
   } else {
@@ -26,15 +31,12 @@ void vga_putchar(unsigned char c) {
     cursor_position.x = 0;
     cursor_position.y++;
     if(cursor_position.y > 24) {
-      asm("xchg bx, bx");
       cursor_position.y -= 2;
       vga_scroll();
     }
   }
 
   vga_set_cursor(cursor_position.x, cursor_position.y);
-
-  asm("sti");
 }
 
 void vga_set_color(char fg, char bg) {
@@ -46,7 +48,7 @@ void vga_set_cursor(int x, int y) {
   cursor_position.x = x;
   cursor_position.y = y;
 
-  cursor_move(x, y);
+  cursor_move(x, y, video_mode.width);
 }
 
 void vga_scroll() {
@@ -61,17 +63,18 @@ void vga_scroll() {
   }
 }
 
-void vga_clear(void) {
+void vga_clear() {
   vga_set_cursor(0, 0);
   for(int y = 0; y < video_mode.height; y++) {
     for(int x = 0; x < video_mode.width; x++) {
       vga_putchar(' ');
     }
   }
+  vga_putchar(' ');
   vga_set_cursor(0, 0);
 }
 
-void vga_init(void) {
+void vga_init() {
   video_mode.width = 80;
   video_mode.height = 25;
   vga_set_color(0x0F, 0x00);
@@ -80,7 +83,7 @@ void vga_init(void) {
   cursor_enable(0, 15);
 }
 
-void printf(char* str) {
+void printf(const char* str) {
   int index = 0;
   while(str[index] != '\0') {
     vga_putchar(str[index]);

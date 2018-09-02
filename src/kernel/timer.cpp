@@ -1,4 +1,8 @@
 #include "timer.h"
+#include "irq.h"
+#include "../drivers/common.h"
+
+int timer_ticks = 0;
 
 void timer_phase(int hz) {
   int divisor = TIMER_CLOCK_SPEED;

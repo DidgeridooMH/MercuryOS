@@ -5,6 +5,6 @@ void cursor_enable(unsigned char start, unsigned char end);
 
 void cursor_disable();
 
-void cursor_move(int x, int y);
+void cursor_move(int x, int y, int width);
 
 #endif

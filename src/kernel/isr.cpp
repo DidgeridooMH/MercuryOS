@@ -1,4 +1,29 @@
 #include "isr.h"
+#include "idt.h"
+#include "../drivers/vga.h"
+
+const char *exception_messages[] = {
+  "Division by Zero",
+  "Debug Exception",
+  "Non Maskable Interrupt Exception",
+  "Breakpoint Exception",
+  "Into Detected Overflow Exception",
+  "Out of Bounds Exception",
+  "Invalid Opcode Exception",
+  "No Coprocessor Exception",
+  "Double Fault Exception",
+  "Coprocessor Segment Overrun Exception",
+  "Bad TSS Exception",
+  "Segment Not Present Exception",
+  "Stack Fault Exception",
+  "General Protection Fault Exception",
+  "Page Fault Exception",
+  "Unknown Interrupt Exception",
+  "Coprocessor Fault Exception",
+  "Alignment Check Exception (486+)",
+  "Machine Check Exception (Pentium/586+)",
+  "Reserved"
+};
 
 void isr_load() {
   idt_set_gate(0, (unsigned)isr0, 0x08, 0x8E);
@@ -35,7 +60,7 @@ void isr_load() {
   idt_set_gate(31, (unsigned)isr31, 0x08, 0x8E);
 }
 
-void fault_handler(struct regs *r) {
+extern "C" void fault_handler(struct regs *r) {
   if(r->int_no < 32) {
     printf("\n");
     if(r->int_no > 18) {
@@ -47,5 +72,5 @@ void fault_handler(struct regs *r) {
     }
   }
 
-  halt();
+  while(true);
 }
