@@ -1,6 +1,6 @@
 #include "keyboard.h"
-#include "common.h"
-#include "../kernel/irq.h"
+#include "io.h"
+#include "../kernel/arch/x86/irq.h"
 #include "../runtime/memory.h"
 
 
@@ -29,7 +29,7 @@ unsigned char kbdus_shifted[128] = {
 kb_flags kb = { false, false, false, false, false, false };
 
 void keyboard_handler(struct regs* r) {
-  unsigned char scancode = inportb(0x60);
+  unsigned char scancode = io.inportb(0x60);
 
   if(scancode & 0x80) {
     update_flags(scancode & 0x7F);

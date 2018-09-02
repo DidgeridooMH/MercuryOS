@@ -1,8 +1,10 @@
 [BITS 32]
 
 global gdt_set
+global idt_set
 
 extern gdt
+extern idt
 
 gdt_set:
   lgdt [gdt]
@@ -15,3 +17,7 @@ gdt_set:
 
 reload_CS:
   ret
+
+idt_set:
+    lidt [idt]
+    ret

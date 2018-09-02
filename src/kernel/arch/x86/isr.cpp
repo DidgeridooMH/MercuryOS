@@ -1,6 +1,6 @@
 #include "isr.h"
-#include "idt.h"
-#include "../drivers/vga.h"
+#include "x86.h"
+#include "../../../drivers/io.h"
 
 const char *exception_messages[] = {
   "Division by Zero",
@@ -62,13 +62,13 @@ void isr_load() {
 
 extern "C" void fault_handler(struct regs *r) {
   if(r->int_no < 32) {
-    printf("\n");
+    io.printf("\n");
     if(r->int_no > 18) {
-      printf(exception_messages[19]);
-      printf("\nException. System Halted!\n");
+      io.printf(exception_messages[19]);
+      io.printf("\nException. System Halted!\n");
     } else {
-      printf(exception_messages[r->int_no]);
-      printf("\nException. System Halted!\n");
+      io.printf(exception_messages[r->int_no]);
+      io.printf("\nException. System Halted!\n");
     }
   }
 

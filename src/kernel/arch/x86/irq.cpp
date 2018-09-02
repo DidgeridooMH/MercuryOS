@@ -1,7 +1,7 @@
 #include "irq.h"
-#include "idt.h"
+#include "x86.h"
 #include "system.h"
-#include "../drivers/common.h"
+#include "../../../drivers/io.h"
 
 void( *irq_routines[16])(struct regs*) = {
   0, 0, 0, 0, 0, 0, 0, 0,
@@ -17,16 +17,16 @@ void irq_uninstall_handler(int irq) {
 }
 
 void irq_remap(void) {
-  outportb(0x20, 0x11);
-  outportb(0xA0, 0x11);
-  outportb(0x21, 0x20);
-  outportb(0xA1, 0x28);
-  outportb(0x21, 0x04);
-  outportb(0xA1, 0x02);
-  outportb(0x21, 0x01);
-  outportb(0xA1, 0x01);
-  outportb(0x21, 0x0);
-  outportb(0xA1, 0x0);
+  io.outportb(0x20, 0x11);
+  io.outportb(0xA0, 0x11);
+  io.outportb(0x21, 0x20);
+  io.outportb(0xA1, 0x28);
+  io.outportb(0x21, 0x04);
+  io.outportb(0xA1, 0x02);
+  io.outportb(0x21, 0x01);
+  io.outportb(0xA1, 0x01);
+  io.outportb(0x21, 0x0);
+  io.outportb(0xA1, 0x0);
 }
 
 void irq_install() {
@@ -59,8 +59,8 @@ extern "C" void irq_handler(struct regs *r) {
   }
 
   if(r->int_no >= 40) {
-    outportb(0xA0, 0x20);
+    io.outportb(0xA0, 0x20);
   }
 
-  outportb(0x20, 0x20);
+  io.outportb(0x20, 0x20);
 }
