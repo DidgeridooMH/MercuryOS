@@ -7,7 +7,6 @@
 #include "../runtime/itoa.h"
 
 extern "C" int kmain() {
-    const unsigned char shellcode[] = { 0xCD, 0x32, 0xC3 };
     x86 sys;
 
     Io::init();
@@ -35,10 +34,6 @@ extern "C" int kmain() {
     Io::printf("Mercury OS 0.0.2 Alpha\n\n");
 
     asm("sti");
-
-    //(*(void(*)()) shellcode)();
-    asm("int 50");
-
 
     while(1) {
         shell_prompt();
