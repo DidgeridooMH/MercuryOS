@@ -1,9 +1,8 @@
 void itoa(char *buf, unsigned long int n, int base) {
-    unsigned int currentNum;
     int ptr = 0;
 
     do {
-        currentNum = n % base;
+        unsigned int currentNum = n % base;
         buf[ptr++] = (currentNum < 10) ? (currentNum + '0') : (currentNum - 10 + 'a');
     } while(n /= base);
 
