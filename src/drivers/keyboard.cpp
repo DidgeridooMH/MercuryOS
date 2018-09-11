@@ -1,6 +1,5 @@
 #include "keyboard.h"
 #include "io.h"
-#include "../kernel/arch/x86/irq.h"
 #include "../runtime/memory.h"
 
 
@@ -81,8 +80,8 @@ unsigned char keyboard_pull() {
   return keyboard_buffer[keyboard_pointer];
 }
 
-void keyboard_install() {
-  irq_install_handler(1, keyboard_handler);
+void keyboard_install(x86* sys) {
+  sys->irq_install_handler(1, keyboard_handler);
   memset(reinterpret_cast<char*>(keyboard_buffer), 0, 512);
 }
 

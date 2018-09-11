@@ -1,7 +1,5 @@
 #include "../drivers/io.h"
 #include "arch/x86/x86.h"
-#include "arch/x86/irq.h"
-#include "arch/x86/isr.h"
 #include "interrupts/system_calls.h"
 #include "interrupts/timer.h"
 #include "../drivers/keyboard.h"
@@ -10,22 +8,24 @@
 
 extern "C" int kmain() {
     Io io;
+    x86 sys;
+
     io.printf("Video context loaded\n");
 
-    gdt_load();
+    sys.gdt_load();
     io.printf("GDT set\n");
 
-    idt_load();
+    sys.idt_load();
     io.printf("IDT populated\n");
 
-    system_calls_install();
+    system_calls_install(&sys);
     io.printf("System Calls Installed\n");
 
-    timer_install();
-    timer_phase(100);
+    timer_install(&sys);
+    timer_phase();
     io.printf("Timer has been initialized\n");
 
-    keyboard_install();
+    keyboard_install(&sys);
     io.printf("Keyboard irq initialized\n");
 
     //io.clearScreen();

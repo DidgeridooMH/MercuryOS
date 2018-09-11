@@ -24,8 +24,8 @@ public:
     void putChar(unsigned char c);
     void setCursor(int x, int y);
     void scrollScreen();
-    void outportb(unsigned short port, unsigned char data);
-    unsigned char inportb(unsigned short port);
+    static void outportb(unsigned short port, unsigned char data);
+    static unsigned char inportb(unsigned short port);
 
     void printf(const char* str);
 

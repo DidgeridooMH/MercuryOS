@@ -6,9 +6,6 @@ all:
 	@echo "Compiling multiboot.s"
 	$(ASM) -f elf32 -o ../build/obj/boot.o boot/boot.S
 
-	@echo "Compiling /kernel/arch/x86.s"
-	$(ASM) -f elf32 -o ../build/obj/x86_s.o kernel/arch/x86/x86.S
-
 	@echo "Compiling idt_s.s"
 	$(ASM) -f elf32 -o ../build/obj/isr_s.o kernel/arch/x86/isr.S
 
@@ -35,12 +32,6 @@ all:
 
 	@echo "Compiling itoa.cpp"
 	$(CPP) -c runtime/itoa.cpp -o ../build/obj/itoa.o $(FLAGS)
-
-	@echo "Compiling isr.cpp"
-	$(CPP) -c kernel/arch/x86/isr.cpp -o ../build/obj/isr.o $(FLAGS)
-
-	@echo "Compiling irq.cpp"
-	$(CPP) -c kernel/arch/x86/irq.cpp -o ../build/obj/irq.o $(FLAGS)
 
 	@echo "Compiling timer.cpp"
 	$(CPP) -c kernel/interrupts/timer.cpp -o ../build/obj/timer.o $(FLAGS)

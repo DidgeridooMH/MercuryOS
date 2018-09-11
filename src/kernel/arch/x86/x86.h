@@ -33,22 +33,37 @@ struct idt_descriptor {
   unsigned int    base;
 } __attribute__((packed));
 
-void gdt_load();
-void gdt_set_entry( int id,
-                    unsigned long base,
-                    unsigned long limit,
-                    unsigned char access,
-                    unsigned char flags);
+class x86 {
+private:
+    struct gdt_entry gdt_entries[GDT_SIZE];
+    struct idt_entry idt_entries[256];
 
-extern "C" void gdt_set();
+public:
+    void gdt_load();
+    void gdt_set_entry( int id,
+                        unsigned long base,
+                        unsigned long limit,
+                        unsigned char access,
+                        unsigned char flags);
 
-void idt_load();
-void idt_set_gate(  unsigned char id,
-                    unsigned long base,
-                    unsigned short sel,
-                    unsigned char flags);
+    void idt_load();
+    void idt_set_gate(  unsigned char id,
+                        unsigned long base,
+                        unsigned short sel,
+                        unsigned char flags);
 
-extern "C" void idt_set();
+    void isr_load();
+
+    void irq_install_handler(int irq, void (*handler)(struct regs *r));
+
+    void irq_uninstall_handler(int irq);
+
+    void irq_remap(void);
+
+    void irq_install();
+
+};
+
 
 
 
