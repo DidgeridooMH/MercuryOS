@@ -1,13 +1,16 @@
 #include "shell.h"
+#include "../runtime/memory.h"
+#include "../drivers/keyboard.h"
+#include "../runtime/string.h"
 
 void shell_remove_from_buffer(char* buffer, int* index) {
   index[0]--;
   buffer[*index] = 0;
 }
 
-int shell_update_buffer(char* buffer, int* index, char key) {
+int shell_update_buffer(char* buffer, int* index, char key, Io* io) {
   if(key == '\n') {
-    shell_process_command(buffer);
+    shell_process_command(buffer, io);
     return 1;
   }
 
@@ -20,28 +23,28 @@ int shell_update_buffer(char* buffer, int* index, char key) {
   return 0;
 }
 
-void shell_prompt() {
+void shell_prompt(Io* io) {
   char command[256];
   memset(command, 0, 256);
   int command_index = 0;
   command[0] = '\0';
-  printf(">");
+  io->printf(">");
 
   while(1){
     if(get_keyboard_pointer() > 0) {
       char keyPress = keyboard_pull();
       if(keyPress == '\b') {
         if(command_index > 0) {
-          vga_putchar(keyPress);
+          io->putChar(keyPress);
           shell_remove_from_buffer(command, &command_index);
         }
       } else if(command_index < 255) {
-        vga_putchar(keyPress);
-        if(shell_update_buffer(command, &command_index, keyPress) == 1){
+        io->putChar(keyPress);
+        if(shell_update_buffer(command, &command_index, keyPress, io) == 1){
           break;
         }
       } else {
-        if(shell_update_buffer(command, &command_index, keyPress)){
+        if(shell_update_buffer(command, &command_index, keyPress, io)){
           break;
         }
       }
@@ -49,16 +52,16 @@ void shell_prompt() {
   }
 }
 
-void shell_process_command(char* command) {
+void shell_process_command(char* command, Io* io) {
   if(strcmp(command, "shutdown") == 0) {
-    shell_shutdown();
+    shell_shutdown(io);
   } else {
-    printf("Unable to execute command ");
-    printf(command);
-    printf("\n");
+    io->printf("Unable to execute command ");
+    io->printf(command);
+    io->printf("\n");
   }
 }
 
-void shell_shutdown() {
-  printf("Shutdown\n");
+void shell_shutdown(Io* io) {
+  io->printf("Shutdown\n");
 }

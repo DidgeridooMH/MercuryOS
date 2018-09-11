@@ -1,64 +1,49 @@
-C=gcc
+CPP=i386-elf-g++
 ASM=nasm
-FLAGS=-std=gnu99 -m32 -ffreestanding -O2 -Wno-all -masm=intel -fno-pie
+FLAGS=-ffreestanding -O2 -Wall -Wextra -fno-exceptions -fno-rtti -masm=intel -m32
 
 all:
 	@echo "Compiling multiboot.s"
 	$(ASM) -f elf32 -o ../build/obj/boot.o boot/boot.S
 
-	@echo "Compiling gtd_s.s"
-	$(ASM) -f elf32 -o ../build/obj/gtd_s.o kernel/gtd_s.S
+	@echo "Compiling idt_s.s"
+	$(ASM) -f elf32 -o ../build/obj/isr_s.o kernel/arch/x86/isr.S
 
 	@echo "Compiling idt_s.s"
-	$(ASM) -f elf32 -o ../build/obj/idt_s.o kernel/idt_s.S
-
-	@echo "Compiling idt_s.s"
-	$(ASM) -f elf32 -o ../build/obj/isr_s.o kernel/isr_s.S
-
-	@echo "Compiling idt_s.s"
-	$(ASM) -f elf32 -o ../build/obj/isq_s.o kernel/irq_s.S
+	$(ASM) -f elf32 -o ../build/obj/isq_s.o kernel/arch/x86/irq.S
 
 	@echo "Compiling system_calls.s"
-	$(ASM) -f elf32 -o ../build/obj/system_calls_s.o kernel/system_calls_s.S
+	$(ASM) -f elf32 -o ../build/obj/system_calls_s.o kernel/interrupts/system_calls.S
 
-	@echo "Compiling kernel.c"
-	$(C) -c kernel/kernel.c -o ../build/obj/kernel.o $(FLAGS)
+	@echo "Compiling kernel.cpp"
+	$(CPP) -c kernel/kernel.cpp -o ../build/obj/kernel.o $(FLAGS)
 
-	@echo "Compiling common.c"
-	$(C) -c drivers/common.c -o ../build/obj/common.o $(FLAGS)
+	@echo "Compiling vga.cpp"
+	$(CPP) -c drivers/io.cpp -o ../build/obj/io.o $(FLAGS)
 
-	@echo "Compiling vga.c"
-	$(C) -c drivers/vga.c -o ../build/obj/vga.o $(FLAGS)
+	@echo "Compiling string.cpp"
+	$(CPP) -c runtime/string.cpp -o ../build/obj/string.o $(FLAGS)
 
-	@echo "Compiling string.c"
-	$(C) -c runtime/string.c -o ../build/obj/string.o $(FLAGS)
+	@echo "Compiling x86.cpp"
+	$(CPP) -c kernel/arch/x86/x86.cpp -o ../build/obj/x86.o $(FLAGS)
 
-	@echo "Compiling gdt.c"
-	$(C) -c kernel/gdt.c -o ../build/obj/gdt.o $(FLAGS)
+	@echo "Compiling memory.cpp"
+	$(CPP) -c runtime/memory.cpp -o ../build/obj/memory.o $(FLAGS)
 
-	@echo "Compiling memory.c"
-	$(C) -c runtime/memory.c -o ../build/obj/memory.o $(FLAGS)
+	@echo "Compiling itoa.cpp"
+	$(CPP) -c runtime/itoa.cpp -o ../build/obj/itoa.o $(FLAGS)
 
-	@echo "Compiling idt.c"
-	$(C) -c kernel/idt.c -o ../build/obj/idt.o $(FLAGS)
+	@echo "Compiling timer.cpp"
+	$(CPP) -c kernel/interrupts/timer.cpp -o ../build/obj/timer.o $(FLAGS)
 
-	@echo "Compiling isr.c"
-	$(C) -c kernel/isr.c -o ../build/obj/isr.o $(FLAGS)
+	@echo "Compiling keyboard.cpp"
+	$(CPP) -c drivers/keyboard.cpp -o ../build/obj/keyboard.o $(FLAGS)
 
-	@echo "Compiling irq.c"
-	$(C) -c kernel/irq.c -o ../build/obj/irq.o $(FLAGS)
+	@echo "Compiling shell.cpp"
+	$(CPP) -c shell/shell.cpp -o ../build/obj/shell.o $(FLAGS)
 
-	@echo "Compiling timer.c"
-	$(C) -c kernel/timer.c -o ../build/obj/timer.o $(FLAGS)
+	@echo "Compiling system_calls.cpp"
+	$(CPP) -c kernel/interrupts/system_calls.cpp -o ../build/obj/system_calls.o $(FLAGS)
 
-	@echo "Compiling keyboard.c"
-	$(C) -c drivers/keyboard.c -o ../build/obj/keyboard.o $(FLAGS)
-
-	@echo "Compiling cursor.c"
-	$(C) -c drivers/cursor.c -o ../build/obj/cursor.o $(FLAGS)
-
-	@echo "Compiling shell.c"
-	$(C) -c shell/shell.c -o ../build/obj/shell.o $(FLAGS)
-
-	@echo "Compiling system_calls.c"
-	$(C) -c kernel/system_calls.c -o ../build/obj/system_calls.o $(FLAGS)
+	@echo "Compiling interface.cpp"
+	$(CPP) -c kernel/interface.cpp -o ../build/obj/interface.o $(FLAGS)
