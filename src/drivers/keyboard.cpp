@@ -28,7 +28,7 @@ unsigned char kbdus_shifted[128] = {
 kb_flags kb = { false, false, false, false, false, false };
 
 void keyboard_handler(struct regs* r) {
-  unsigned char scancode = io.inportb(0x60);
+  unsigned char scancode = Io::inportb(0x60);
 
   if(scancode & 0x80) {
     update_flags(scancode & 0x7F);

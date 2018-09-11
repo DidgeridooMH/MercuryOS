@@ -16,31 +16,19 @@ struct cursor {
   int y;
 };
 
-class Io {
-public:
-    Io();
+namespace Io {
+    void init();
     void setColor(char fg, char bg);
     void clearScreen();
     void putChar(unsigned char c);
     void setCursor(int x, int y);
     void scrollScreen();
-    static void outportb(unsigned short port, unsigned char data);
-    static unsigned char inportb(unsigned short port);
-
+    void outportb(unsigned short port, unsigned char data);
+    unsigned char inportb(unsigned short port);
     void printf(const char* str);
-
-private:
-    unsigned short* m_vidmem = (unsigned short*)0xB8000;
-
-    struct bufmode m_videoMode;
-    struct colormode m_colorMode;
-    struct cursor m_cursorPosition;
-
     void cursorEnable(unsigned char start, unsigned char end);
     void cursorDisable();
     void cursorMove(int x, int y);
 };
-
-extern Io io;
 
 #endif

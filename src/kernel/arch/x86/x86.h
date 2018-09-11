@@ -46,6 +46,7 @@ public:
                         unsigned char access,
                         unsigned char flags);
 
+    void idt_set();
     void idt_load();
     void idt_set_gate(  unsigned char id,
                         unsigned long base,

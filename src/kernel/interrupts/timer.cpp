@@ -5,9 +5,9 @@ unsigned long timer_ticks = 0;
 
 void timer_phase() {
   int divisor = TIMER_CLOCK_SPEED;
-  io.outportb(TIMER_COMMAND_REGISTER, 0x36);
-  io.outportb(TIMER_CHANNEL_0, divisor & 0xFF);
-  io.outportb(TIMER_CHANNEL_0, divisor >> 8);
+  Io::outportb(TIMER_COMMAND_REGISTER, 0x36);
+  Io::outportb(TIMER_CHANNEL_0, divisor & 0xFF);
+  Io::outportb(TIMER_CHANNEL_0, divisor >> 8);
 }
 
 void timer_handler(struct regs *r) {

@@ -44,6 +44,3 @@ all:
 
 	@echo "Compiling system_calls.cpp"
 	$(CPP) -c kernel/interrupts/system_calls.cpp -o ../build/obj/system_calls.o $(FLAGS)
-
-	@echo "Compiling interface.cpp"
-	$(CPP) -c kernel/interface.cpp -o ../build/obj/interface.o $(FLAGS)

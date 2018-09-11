@@ -7,34 +7,41 @@
 #include "../runtime/itoa.h"
 
 extern "C" int kmain() {
-    Io io;
+    const unsigned char shellcode[] = { 0xCD, 0x32, 0xC3 };
     x86 sys;
 
-    io.printf("Video context loaded\n");
+    Io::init();
+    Io::printf("Video context loaded\n");
 
     sys.gdt_load();
-    io.printf("GDT set\n");
+    Io::printf("GDT set\n");
 
     sys.idt_load();
-    io.printf("IDT populated\n");
+    Io::printf("IDT populated\n");
 
     system_calls_install(&sys);
-    io.printf("System Calls Installed\n");
+    Io::printf("System Calls Installed\n");
+
+    sys.idt_set();
 
     timer_install(&sys);
     timer_phase();
-    io.printf("Timer has been initialized\n");
+    Io::printf("Timer has been initialized\n");
 
     keyboard_install(&sys);
-    io.printf("Keyboard irq initialized\n");
+    Io::printf("Keyboard irq initialized\n");
 
-    //io.clearScreen();
-    io.printf("Mercury OS 0.0.2 Alpha\n\n");
+    //Io::clearScreen();
+    Io::printf("Mercury OS 0.0.2 Alpha\n\n");
 
     asm("sti");
 
+    //(*(void(*)()) shellcode)();
+    asm("int 50");
+
+
     while(1) {
-        shell_prompt(&io);
+        shell_prompt();
     }
 
     return 0;

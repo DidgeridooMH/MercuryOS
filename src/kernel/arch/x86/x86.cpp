@@ -49,6 +49,11 @@ void x86::gdt_load() {
         reload_CS:          \n");
 }
 
+void x86::idt_set() {
+    memcpy((char*)idt.base, (char*)idt_entries, idt.limit);
+    asm("lidt [idt]");
+}
+
 void x86::idt_load() {
   idt.limit = sizeof(struct idt_entry) * 0xFF;
   idt.base = IDT_BASE;
@@ -57,10 +62,6 @@ void x86::idt_load() {
 
   isr_load();
   irq_install();
-
-  memcpy((char*)idt.base, (char*)idt_entries, idt.limit);
-
-  asm("lidt [idt]");
 }
 
 void x86::idt_set_gate(  unsigned char id,
@@ -142,16 +143,16 @@ void x86::irq_uninstall_handler(int irq) {
 }
 
 void x86::irq_remap(void) {
-  io.outportb(0x20, 0x11);
-  io.outportb(0xA0, 0x11);
-  io.outportb(0x21, 0x20);
-  io.outportb(0xA1, 0x28);
-  io.outportb(0x21, 0x04);
-  io.outportb(0xA1, 0x02);
-  io.outportb(0x21, 0x01);
-  io.outportb(0xA1, 0x01);
-  io.outportb(0x21, 0x0);
-  io.outportb(0xA1, 0x0);
+  Io::outportb(0x20, 0x11);
+  Io::outportb(0xA0, 0x11);
+  Io::outportb(0x21, 0x20);
+  Io::outportb(0xA1, 0x28);
+  Io::outportb(0x21, 0x04);
+  Io::outportb(0xA1, 0x02);
+  Io::outportb(0x21, 0x01);
+  Io::outportb(0xA1, 0x01);
+  Io::outportb(0x21, 0x0);
+  Io::outportb(0xA1, 0x0);
 }
 
 extern "C" void irq_handler(struct regs *r) {
@@ -163,21 +164,21 @@ extern "C" void irq_handler(struct regs *r) {
   }
 
   if(r->int_no >= 40) {
-    io.outportb(0xA0, 0x20);
+    Io::outportb(0xA0, 0x20);
   }
 
-  io.outportb(0x20, 0x20);
+  Io::outportb(0x20, 0x20);
 }
 
 extern "C" void fault_handler(struct regs *r) {
   if(r->int_no < 32) {
-    io.printf("\n");
+    Io::printf("\n");
     if(r->int_no > 18) {
-      io.printf(exception_messages[19]);
-      io.printf("\nException. System Halted!\n");
+      Io::printf(exception_messages[19]);
+      Io::printf("\nException. System Halted!\n");
     } else {
-      io.printf(exception_messages[r->int_no]);
-      io.printf("\nException. System Halted!\n");
+      Io::printf(exception_messages[r->int_no]);
+      Io::printf("\nException. System Halted!\n");
     }
   }
 
