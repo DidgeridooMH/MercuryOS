@@ -30,7 +30,7 @@ extern "C" int kmain() {
     keyboard_install(&sys);
     Io::printf("Keyboard irq initialized\n");
 
-    //Io::clearScreen();
+    Io::clearScreen();
     Io::printf("Mercury OS 0.0.2 Alpha\n\n");
 
     asm("sti");

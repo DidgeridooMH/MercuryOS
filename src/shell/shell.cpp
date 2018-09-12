@@ -31,7 +31,8 @@ void shell_prompt() {
   command[0] = '\0';
   Io::printf(">");
 
-  while(1){
+  bool processed = false;
+  while(!processed){
     if(get_keyboard_pointer() > 0) {
       char keyPress = keyboard_pull();
       if(keyPress == '\b') {
@@ -41,12 +42,15 @@ void shell_prompt() {
         }
       } else if(command_index < 255) {
         Io::putChar(keyPress);
-        if(shell_update_buffer(command, &command_index, keyPress) == 1){
-          break;
+        if(shell_update_buffer(command, &command_index, keyPress)){
+          processed = true;
         }
       } else {
+        if(keyPress == '\n') {
+            Io::putChar(keyPress);
+        }
         if(shell_update_buffer(command, &command_index, keyPress)){
-          break;
+          processed = true;
         }
       }
     }
