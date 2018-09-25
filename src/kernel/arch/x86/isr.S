@@ -13,6 +13,8 @@
   global isr%1
   isr%1:
     cli
+    pop ebx;
+    push ebx;
     push byte %1
     jmp isr_common_stub
 %endmacro

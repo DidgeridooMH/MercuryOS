@@ -176,7 +176,11 @@ extern "C" void fault_handler(struct regs *r) {
     if(r->int_no > 18) {
       Io::printf(exception_messages[19]);
       Io::printf("\nException. System Halted!\n");
-    } else {
+  } else if(r->int_no == 14) {
+      Io::printf(exception_messages[14]);
+      Io::printf(page_fault_messages[r->ebx]);
+      Io::printf("\nException. System Halted!\n");
+  } else {
       Io::printf(exception_messages[r->int_no]);
       Io::printf("\nException. System Halted!\n");
     }

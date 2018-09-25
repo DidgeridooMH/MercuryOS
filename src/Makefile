@@ -44,3 +44,6 @@ all:
 
 	@echo "Compiling system_calls.cpp"
 	$(CPP) -c kernel/interrupts/system_calls.cpp -o ../build/obj/system_calls.o $(FLAGS)
+
+	@echo "Compiling mmu.cpp"
+	$(CPP) -c kernel/memory/mmu.cpp -o ../build/obj/mmu.o $(FLAGS)

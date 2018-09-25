@@ -5,6 +5,7 @@
 #include "../drivers/keyboard.h"
 #include "../shell/shell.h"
 #include "../runtime/itoa.h"
+#include "memory/mmu.h"
 
 extern "C" int kmain() {
     x86 sys;
@@ -29,6 +30,8 @@ extern "C" int kmain() {
 
     keyboard_install(&sys);
     Io::printf("Keyboard irq initialized\n");
+
+    MMU::paging_load();
 
     Io::clearScreen();
     Io::printf("Mercury OS 0.0.2 Alpha\n\n");

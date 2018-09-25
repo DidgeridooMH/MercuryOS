@@ -81,4 +81,15 @@ const char *exception_messages[] = {
   "Reserved"
 };
 
+const char *page_fault_messages[] = {
+    "Supervisory process tried to read a non-present page entry",
+    "Supervisory process tried to read a page and caused a protection fault",
+    "Supervisory process tried to write to a non-present page entry",
+    "Supervisory process tried to write a page and caused a protection fault",
+    "User process tried to read a non-present page entry",
+    "User process tried to read a page and caused a protection fault",
+    "User process tried to write to a non-present page entry",
+    "User process tried to write a page and caused a protection fault",
+};
+
 #endif
