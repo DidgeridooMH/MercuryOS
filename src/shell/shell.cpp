@@ -1,8 +1,10 @@
 #include "shell.h"
+#include "../kernel/memory/mmu.h"
 #include "../runtime/memory.h"
 #include "../drivers/keyboard.h"
 #include "../runtime/string.h"
 #include "../drivers/io.h"
+#include "../runtime/itoa.h"
 
 void shell_remove_from_buffer(char* buffer, int* index) {
   index[0]--;
@@ -58,13 +60,13 @@ void shell_prompt() {
 }
 
 void shell_process_command(char* command) {
-  if(strcmp(command, "shutdown") == 0) {
-    shell_shutdown();
-  } else {
-    Io::printf("Unable to execute command ");
-    Io::printf(command);
-    Io::printf("\n");
-  }
+    if(strcmp(command, "shutdown") == 0) {
+        shell_shutdown();
+    } else {
+        Io::printf("Unable to execute command ");
+        Io::printf(command);
+        Io::printf("\n");
+    }
 }
 
 void shell_shutdown() {

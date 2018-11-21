@@ -1,6 +1,6 @@
 CPP=i386-elf-g++
 ASM=nasm
-FLAGS=-ffreestanding -O2 -Wall -Wextra -fno-exceptions -fno-rtti -masm=intel -m32
+FLAGS=-ffreestanding -Wall -Wextra -fno-exceptions -fno-rtti -masm=intel -m32
 
 all:
 	@echo "Compiling multiboot.s"

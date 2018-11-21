@@ -6,9 +6,12 @@
 #define IDENTITY_PAGE_SIZE  0x100000
 
 namespace MMU {
+    unsigned char* map_page(unsigned int page_num, unsigned int virtual_address);
+    void unmap_page(unsigned int page_num);
     void paging_load();
-    void identity_paging(unsigned int* pageTableAddr, unsigned int vaddr, int size);
+    void generate_paging_tables(unsigned int* pageTableAddr, unsigned int vaddr, int size);
     void enable_paging(unsigned int* directory);
+    void disable_paging();
 };
 
 #endif

@@ -5,41 +5,47 @@
 
 unsigned int directoryAddr;
 
+/*
+ * GCC Messes up some calculations when optimizing.
+ */
+unsigned char* MMU::map_page(unsigned int page_num, unsigned int virtual_address) {
+    unsigned int* pageDir = (unsigned int*)PAGE_DIR_ADDRESS;
+    unsigned int* logical_address = 0;
+    if(page_num > 0) {
+        logical_address = (unsigned int*)(PAGE_TABLE_ADDRESS + 0x400000 * page_num);
+        disable_paging();
+        pageDir[page_num] = (unsigned int)(logical_address) | 1;
+        generate_paging_tables(logical_address, virtual_address, 0x400000);
+        enable_paging((unsigned int*)PAGE_DIR_ADDRESS);
+    } else {
+        Io::printf("\nKERNEL_PANIC: Identity page compromised.");
+    }
+    return (unsigned char*)(0x400000 * page_num);
+}
+
+void MMU::unmap_page(unsigned int page_num) {
+    unsigned int* pageDir = (unsigned int*)PAGE_DIR_ADDRESS;
+    if(page_num > 0) {
+        disable_paging();
+        pageDir[page_num] = 0;
+        enable_paging((unsigned int*)PAGE_DIR_ADDRESS);
+    } else {
+        Io::printf("\nKERNEL_PANIC: Identity page compromised.");
+    }
+}
+
 void MMU::paging_load() {
     unsigned int* pageDir = (unsigned int*)PAGE_DIR_ADDRESS;
-
-    for(int i = 0; i < 1024; i++) {
-        if(i < 4) {
-            pageDir[i] = (PAGE_TABLE_ADDRESS + 1024 * i) | 1;
-        } else {
-            pageDir[i] = 0x2;
-        }
-    }
-
-    identity_paging((unsigned int*)PAGE_TABLE_ADDRESS, 0, 0x400000);
-
+    pageDir[0] = PAGE_TABLE_ADDRESS | 1;
+    generate_paging_tables((unsigned int*)PAGE_TABLE_ADDRESS, 0, 0x400000);
     enable_paging(pageDir);
 }
 
-// lowest 2MB will be identity paged.
-void MMU::identity_paging(unsigned int* pageTableAddr, unsigned int vaddr, int size) {
+void MMU::generate_paging_tables(unsigned int* pageTableAddr, unsigned int vaddr, int size) {
     vaddr = vaddr & 0xFFFFF000;
 
     while(size > 0) {
         *pageTableAddr = vaddr | 1;
-
-        /* Verbose */
-        char entry[8];
-        memset(entry, 0, 8);
-        char address[8];
-        memset(address, 0, 8);
-        itoa(entry, vaddr | 1, 16);
-        itoa(address, (unsigned)pageTableAddr, 16);
-        Io::printf("Wrote entry {0x");
-        Io::printf(entry);
-        Io::printf("} at {0x");
-        Io::printf(address);
-        Io::printf("}\n");
 
         vaddr += 0x1000;
         size -= 0x1000;
@@ -54,4 +60,11 @@ void MMU::enable_paging(unsigned int* directory) {
          mov eax, cr0               \n \
          or eax, 0x80000001         \n \
          mov cr0, eax               \n");
+}
+
+void MMU::disable_paging() {
+    asm("mov eax, 0x60000011        \n \
+         mov cr0, eax               \n \
+         mov eax, 0                 \n \
+         mov cr3, eax               \n ");
 }
