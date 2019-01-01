@@ -11,4 +11,6 @@ void shell_process_command(char* command);
 
 void shell_shutdown();
 
+void program_load_test();
+
 #endif

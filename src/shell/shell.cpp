@@ -59,9 +59,25 @@ void shell_prompt() {
   }
 }
 
+void program_load_test() {
+    MMU::map_page((unsigned int*)0x800000, (unsigned int*)0xc00000, 2);
+    unsigned char shell_code[11] = { 0xB8, 0x00, 0x80, 0x0B, 0x00,
+        0x66, 0xC7, 0x00, 0x48, 0xFF, 0xC3 };
+    unsigned char* program_block = (unsigned char*)0xc00000;
+
+    for (int i = 0; i < 11; i++) {
+        program_block[i] = shell_code[i];
+    }
+
+    ((void(*)())program_block)();
+    MMU::unmap_page((unsigned int*)0xc00000);
+}
+
 void shell_process_command(char* command) {
     if(strcmp(command, "shutdown") == 0) {
         shell_shutdown();
+    } else if(strcmp(command, "test") == 0) {
+        program_load_test();
     } else {
         Io::printf("Unable to execute command ");
         Io::printf(command);

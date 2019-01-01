@@ -6,8 +6,8 @@
 #define IDENTITY_PAGE_SIZE  0x100000
 
 namespace MMU {
-    unsigned char* map_page(unsigned int page_num, unsigned int virtual_address);
-    void unmap_page(unsigned int page_num);
+    void map_page(void* physical_address, void* virtual_address, unsigned int flags);
+    void unmap_page(void* virtual_address);
     void paging_load();
     void generate_paging_tables(unsigned int* pageTableAddr, unsigned int vaddr, int size);
     void enable_paging(unsigned int* directory);
