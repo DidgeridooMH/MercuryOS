@@ -40,17 +40,17 @@ void shell_prompt() {
       char keyPress = keyboard_pull();
       if(keyPress == '\b') {
         if(command_index > 0) {
-          Io::putChar(keyPress);
+          Io::put_char(keyPress);
           shell_remove_from_buffer(command, &command_index);
         }
       } else if(command_index < 255) {
-        Io::putChar(keyPress);
+        Io::put_char(keyPress);
         if(shell_update_buffer(command, &command_index, keyPress)){
           processed = true;
         }
       } else {
         if(keyPress == '\n') {
-            Io::putChar(keyPress);
+            Io::put_char(keyPress);
         }
         if(shell_update_buffer(command, &command_index, keyPress)){
           processed = true;

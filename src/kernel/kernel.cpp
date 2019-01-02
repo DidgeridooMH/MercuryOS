@@ -33,7 +33,7 @@ extern "C" int kmain() {
 
     MMU::paging_load();
 
-    Io::clearScreen();
+    Io::clear_screen();
     Io::printf("Mercury OS 0.0.2 Alpha\n\n");
 
     asm("sti");
