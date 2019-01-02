@@ -47,3 +47,6 @@ all:
 
 	@echo "Compiling mmu.cpp"
 	$(CPP) -c kernel/memory/mmu.cpp -o ../build/obj/mmu.o $(FLAGS)
+
+	@echo "Compiling heap_allocator.cpp"
+	$(CPP) -c kernel/memory/heap_allocator.cpp -o ../build/obj/heap_allocator.o $(FLAGS)

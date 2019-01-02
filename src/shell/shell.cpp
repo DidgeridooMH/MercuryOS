@@ -1,4 +1,5 @@
 #include "shell.h"
+#include "../kernel/memory/heap_allocator.h"
 #include "../kernel/memory/mmu.h"
 #include "../runtime/memory.h"
 #include "../drivers/keyboard.h"
@@ -60,17 +61,29 @@ void shell_prompt() {
 }
 
 void program_load_test() {
-    MMU::map_page((unsigned int*)0x800000, (unsigned int*)0xc00000, 2);
+    MMU::map_page((unsigned int*)0x1000000, (unsigned int*)0xF00000, 2);
+
+    Heap::create_frame(0, 0xF00000, 0x1000);
+
     unsigned char shell_code[11] = { 0xB8, 0x00, 0x80, 0x0B, 0x00,
         0x66, 0xC7, 0x00, 0x48, 0xFF, 0xC3 };
-    unsigned char* program_block = (unsigned char*)0xc00000;
+
+    unsigned char* program_block = (unsigned char*)Heap::allocate_memory(0, 11);
+
+    unsigned char* another_ptr = (unsigned char*)Heap::allocate_memory(0, 256);
 
     for (int i = 0; i < 11; i++) {
         program_block[i] = shell_code[i];
     }
 
     ((void(*)())program_block)();
-    MMU::unmap_page((unsigned int*)0xc00000);
+
+    Heap::deallocate_memory(program_block);
+    Heap::deallocate_memory(another_ptr);
+
+    Heap::delete_frame(0);
+
+    MMU::unmap_page((unsigned int*)0xF00000);
 }
 
 void shell_process_command(char* command) {
