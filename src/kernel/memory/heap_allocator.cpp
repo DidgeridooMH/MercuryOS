@@ -10,27 +10,36 @@ void Heap::initialize_page_heap() {
 
     PageFrame* process_ids = (PageFrame*)PAGE_HEAP_ADDRESS;
 
-    for(int i = 0; i * sizeof(PageFrame) < 0x400000; i++) {
-        process_ids[i].flags.slot_free = true;
+    for(int i = 0; (i + 1) * sizeof(PageFrame) < 0x400000; i++) {
+        process_ids[i].slot_free = true;
     }
 }
 
-void Heap::create_frame(unsigned int process_id, unsigned int address, unsigned int size) {
+Heap::PageFrame* Heap::create_frame(unsigned int process_id, unsigned int address, unsigned int size) {
     PageFrame* process_ids = (PageFrame*)PAGE_HEAP_ADDRESS;
 
     int page_index = -1;
 
-    for(int i = 0; i * sizeof(PageFrame) < 0x400000 && page_index < 0; i++) {
-        if(process_ids[i].flags.slot_free) {
+    for(int i = 0; (i + 1) * sizeof(PageFrame) < 0x400000 && page_index < 0; i++) {
+        if(process_ids[i].slot_free) {
             page_index = i;
         }
+    }
+
+    if(page_index < -1) {
+        Io::printf("Oh no! Out of RAM.");
+        return nullptr;
     }
 
     process_ids[page_index].process_id = process_id;
     process_ids[page_index].address = address;
     process_ids[page_index].size = size;
-    process_ids[page_index].flags.free = true;
-    process_ids[page_index].flags.slot_free = false;
+    process_ids[page_index].prev = nullptr;
+    process_ids[page_index].next = nullptr;
+    process_ids[page_index].free = true;
+    process_ids[page_index].slot_free = false;
+
+    return &process_ids[page_index];
 }
 
 void* Heap::allocate_memory(unsigned int process_id, unsigned int size) {
@@ -38,8 +47,11 @@ void* Heap::allocate_memory(unsigned int process_id, unsigned int size) {
 
     int page_index = -1;
 
-    for(int i = 0; i * sizeof(PageFrame) < 0x400000 && page_index < 0; i++) {
-        if(process_ids[i].process_id == process_id && process_ids[i].size >= size) {
+    asm("xchg bx, bx");
+    for(int i = 0; (i + 1) * sizeof(PageFrame) < 0x400000 && page_index < 0; i++) {
+        if(process_ids[i].process_id == process_id
+            && process_ids[i].size >= size
+            && process_ids[i].free) {
             page_index = i;
         }
     }
@@ -49,14 +61,20 @@ void* Heap::allocate_memory(unsigned int process_id, unsigned int size) {
     }
 
     if(process_ids[page_index].size == size) {
-        process_ids[page_index].flags.free = false;
+        process_ids[page_index].free = false;
         return (void*)process_ids[page_index].address;
     }
 
-    create_frame(process_id, process_ids[page_index].address + size, process_ids[page_index].size - size);
+    PageFrame* next = create_frame(
+        process_id,
+        process_ids[page_index].address + size,
+         process_ids[page_index].size - size
+    );
 
     process_ids[page_index].size = size;
-    process_ids[page_index].flags.free = false;
+    process_ids[page_index].free = false;
+    process_ids[page_index].next = next;
+    next->prev = &process_ids[page_index];
 
     return (void*)process_ids[page_index].address;
 }
@@ -64,21 +82,46 @@ void* Heap::allocate_memory(unsigned int process_id, unsigned int size) {
 void Heap::deallocate_memory(void* address) {
     PageFrame* process_ids = (PageFrame*)PAGE_HEAP_ADDRESS;
 
-    for(int i = 0; i * sizeof(PageFrame) < 0x400000; i++) {
+    for(int i = 0; (i + 1) * sizeof(PageFrame) < 0x400000; i++) {
         if(process_ids[i].address == (unsigned int)address) {
-            process_ids[i].flags.free = true;
+            process_ids[i].free = true;
+            merge_contiguous(&process_ids[i]);
             break;
-            // TODO: Merge blocks after deallocation
         }
+    }
+}
+
+void Heap::merge_contiguous(PageFrame* frame) {
+    if(frame->prev != nullptr && frame->prev->free) {
+        frame->prev->size += frame->size;
+        frame->prev->next = frame->next;
+        frame->slot_free = true;
+        merge_contiguous(frame->prev);
+    } else if (frame->next != nullptr && frame->next->free) {
+        frame->size += frame->next->size;
+        frame->next = frame->next->next;
+        frame->next->slot_free = true;
+        merge_contiguous(frame);
     }
 }
 
 void Heap::delete_frame(unsigned int process_id) {
     PageFrame* process_ids = (PageFrame*)PAGE_HEAP_ADDRESS;
 
-    for(int i = 0; i * sizeof(PageFrame) < 0x400000; i++) {
+    int frame_id = -1;
+
+    for(int i = 0; (i + 1) * sizeof(PageFrame) < 0x400000 && frame_id < 0; i++) {
         if(process_ids[i].process_id == process_id) {
-            process_ids[i].flags.slot_free = true;
+            frame_id = i;
+        }
+    }
+
+    if(frame_id >= 0) {
+        PageFrame* current = &process_ids[frame_id];
+
+        while (current != nullptr) {
+            current->slot_free = true;
+            current = current->next;
         }
     }
 }

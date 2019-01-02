@@ -1,18 +1,18 @@
 #include "io.h"
 
-struct bufmode videoMode;
-struct colormode colorMode;
-struct cursor cursorPosition;
+struct BufferMode video_mode;
+struct ColorMode  color_mode;
+struct Cursor     cursor_position;
 
-unsigned short* vidmem = (unsigned short*)0xB8000;
+unsigned short* video_memory = (unsigned short*)0xB8000;
 
 void Io::init() {
-  videoMode.width = 80;
-  videoMode.height = 25;
-  setColor(0x0F, 0x00);
-  clearScreen();
+  video_mode.width = 80;
+  video_mode.height = 25;
+  set_color(0x0F, 0x00);
+  clear_screen();
 
-  cursorEnable(0, 15);
+  cursor_enable(0, 15);
 }
 
 void Io::outportb(unsigned short port, unsigned char data) {
@@ -25,9 +25,9 @@ unsigned char Io::inportb(unsigned short port) {
   return ret;
 }
 
-void Io::putChar(unsigned char c) {
-  unsigned short entry = (colorMode.bg << 12) | (colorMode.fg << 8) | c;
-  unsigned short* dst = vidmem + cursorPosition.x + (cursorPosition.y * videoMode.width);
+void Io::put_char(unsigned char c) {
+  unsigned short entry = (color_mode.bg << 12) | (color_mode.fg << 8) | c;
+  unsigned short* dst = video_memory + cursor_position.x + (cursor_position.y * video_mode.width);
 
   /*
   * If a new line character is to be written,
@@ -35,72 +35,72 @@ void Io::putChar(unsigned char c) {
   * it to move to the next line.
   */
   if(c == '\n') {
-    cursorPosition.x = 80;
+    cursor_position.x = 80;
   } else if(c == '\b') {
     dst--;
     *dst = entry & ~0xFF;
-    cursorPosition.x--;
+    cursor_position.x--;
   } else {
     *dst = entry;
-    cursorPosition.x++;
+    cursor_position.x++;
   }
 
-  if(cursorPosition.x > 79) {
-    cursorPosition.x = 0;
-    cursorPosition.y++;
-    if(cursorPosition.y > 24) {
-      cursorPosition.y--;
-      scrollScreen();
+  if(cursor_position.x > 79) {
+    cursor_position.x = 0;
+    cursor_position.y++;
+    if(cursor_position.y > 24) {
+      cursor_position.y--;
+      scroll_screen();
     }
   }
 
-  setCursor(cursorPosition.x, cursorPosition.y);
+  set_cursor(cursor_position.x, cursor_position.y);
 }
 
-void Io::setColor(char fg, char bg) {
-  colorMode.fg = fg;
-  colorMode.bg = bg;
+void Io::set_color(char fg, char bg) {
+  color_mode.fg = fg;
+  color_mode.bg = bg;
 }
 
-void Io::setCursor(int x, int y) {
-  cursorPosition.x = x;
-  cursorPosition.y = y;
+void Io::set_cursor(int x, int y) {
+  cursor_position.x = x;
+  cursor_position.y = y;
 
-  cursorMove(x, y);
+  cursor_move(x, y);
 }
 
-void Io::scrollScreen() {
-  for(int y = 0; y < videoMode.height; y++){
-    for(int i = 0; i < videoMode.width; i++) {
-      vidmem[i + y * videoMode.width] = vidmem[i + (y + 1) * videoMode.width];
+void Io::scroll_screen() {
+  for(int y = 0; y < video_mode.height; y++){
+    for(int i = 0; i < video_mode.width; i++) {
+      video_memory[i + y * video_mode.width] = video_memory[i + (y + 1) * video_mode.width];
     }
   }
 
-  for(int i = 0; i < videoMode.width; i++) {
-    vidmem[i + videoMode.width * 24] = 0;
+  for(int i = 0; i < video_mode.width; i++) {
+    video_memory[i + video_mode.width * 24] = 0;
   }
 }
 
-void Io::clearScreen() {
-  setCursor(0, 0);
-  for(int y = 0; y < videoMode.height; y++) {
-    for(int x = 0; x < videoMode.width; x++) {
-      putChar(' ');
+void Io::clear_screen() {
+  set_cursor(0, 0);
+  for(int y = 0; y < video_mode.height; y++) {
+    for(int x = 0; x < video_mode.width; x++) {
+      put_char(' ');
     }
   }
-  putChar(' ');
-  setCursor(0, 0);
+  put_char(' ');
+  set_cursor(0, 0);
 }
 
 void Io::printf(const char* str) {
   int index = 0;
   while(str[index] != '\0') {
-    putChar(str[index]);
+    put_char(str[index]);
     index++;
   }
 }
 
-void Io::cursorEnable(unsigned char start, unsigned char end) {
+void Io::cursor_enable(unsigned char start, unsigned char end) {
     outportb(0x3D4, 0x0A);
     outportb(0x3D5, (inportb(0x3D5) & 0xC0) | start);
 
@@ -108,13 +108,13 @@ void Io::cursorEnable(unsigned char start, unsigned char end) {
 	outportb(0x3D5, (inportb(0x3E0) & 0xE0) | end);
 }
 
-void Io::cursorDisable() {
+void Io::cursor_disable() {
 	outportb(0x3D4, 0x0A);
 	outportb(0x3D5, 0x20);
 }
 
-void Io::cursorMove(int x, int y) {
-  unsigned short position = videoMode.width * y + x;
+void Io::cursor_move(int x, int y) {
+  unsigned short position = video_mode.width * y + x;
 
   outportb(0x3D4, 0x0F);
   outportb(0x3D5, (unsigned char)(position & 0xFF));

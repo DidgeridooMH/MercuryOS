@@ -72,12 +72,15 @@ void program_load_test() {
 
     unsigned char* another_ptr = (unsigned char*)Heap::allocate_memory(0, 256);
 
+    unsigned char* anoter_ptr = (unsigned char*)Heap::allocate_memory(0, 256);
+
     for (int i = 0; i < 11; i++) {
         program_block[i] = shell_code[i];
     }
 
     ((void(*)())program_block)();
 
+    Heap::deallocate_memory(anoter_ptr);
     Heap::deallocate_memory(program_block);
     Heap::deallocate_memory(another_ptr);
 
