@@ -4,9 +4,9 @@
 
 unsigned char keyboard_buffer[512];
 
-unsigned int keyboard_pointer = 0;
-
 struct keyboard_flags kb_flags = { 0, 0, 0, 0, 0, 0 };
+
+unsigned int keyboard_pointer = 0;
 
 unsigned char kbdus[128] = {
     0,  0, '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', '\b', '\t',
@@ -41,6 +41,10 @@ void keyboard_handler(struct regs* r) {
     }
     keyboard_update_flags(scancode);
   }
+}
+
+unsigned int keyboard_get_pointer() {
+    return keyboard_pointer;
 }
 
 void keyboard_update_flags(unsigned char code) {

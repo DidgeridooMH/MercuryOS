@@ -2,7 +2,7 @@
 #include "../../drivers/io.h"
 
 void system_interrupt_test() {
-    printf("software interrupt test: passed\n");
+    io_printf("software interrupt test: passed\n");
 }
 
 void system_calls_install() {

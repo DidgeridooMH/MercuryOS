@@ -14,6 +14,8 @@ struct keyboard_flags {
 
 void keyboard_handler(struct regs* r);
 
+unsigned int keyboard_get_pointer();
+
 void keyboard_update_flags(unsigned char code);
 
 void keyboard_push(unsigned char data);
