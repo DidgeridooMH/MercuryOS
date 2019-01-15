@@ -16,8 +16,6 @@ struct io_cursor {
   int y;
 } cursor_position;
 
-static unsigned short* video_memory_addr = (unsigned short*)0xB8000;
-
 void io_init();
 
 void io_set_color(char fg, char bg);

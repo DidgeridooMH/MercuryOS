@@ -18,6 +18,9 @@ all:
 	@echo "Compiling io.c"
 	$(C) -c drivers/io.c -o ../build/obj/io.o $(FLAGS)
 
+	@echo "Compiling keyboard.c"
+	$(C) -c drivers/keyboard.c -o ../build/obj/keyboard.o $(FLAGS)
+
 	@echo "Compiling kernel.c"
 	$(C) -c kernel/kernel.c -o ../build/obj/kernel.o $(FLAGS)
 
@@ -35,9 +38,6 @@ all:
 
 	@echo "Compiling timer.c"
 	$(C) -c kernel/interrupts/timer.c -o ../build/obj/timer.o $(FLAGS)
-
-	@echo "Compiling keyboard.c"
-	$(C) -c drivers/keyboard.c -o ../build/obj/keyboard.o $(FLAGS)
 
 	@echo "Compiling shell.c"
 	$(C) -c shell/shell.c -o ../build/obj/shell.o $(FLAGS)

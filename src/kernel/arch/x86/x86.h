@@ -5,6 +5,8 @@
 #define GDT_BASE 0x00000800
 #define IDT_BASE 0x00000000
 
+#include "system.h"
+
 struct gdt_entry {
   unsigned short  limit;
   unsigned short  base_low;
@@ -33,39 +35,27 @@ struct idt_descriptor {
   unsigned int    base;
 } __attribute__((packed));
 
-class x86 {
-private:
-    struct gdt_entry gdt_entries[GDT_SIZE];
-    struct idt_entry idt_entries[256];
+struct gdt_entry gdt_entries[GDT_SIZE];
+struct idt_entry idt_entries[256];
 
-public:
-    void gdt_load();
-    void gdt_set_entry( int id,
-                        unsigned long base,
-                        unsigned long limit,
-                        unsigned char access,
-                        unsigned char flags);
+void gdt_load();
+void gdt_set_entry(int id, unsigned long base, unsigned long limit,
+                    unsigned char access, unsigned char flags);
 
-    void idt_set();
-    void idt_load();
-    void idt_set_gate(  unsigned char id,
-                        unsigned long base,
-                        unsigned short sel,
-                        unsigned char flags);
+void idt_set();
 
-    void isr_load();
+void idt_load();
 
-    void irq_install_handler(int irq, void (*handler)(struct regs *r));
+void idt_set_gate(unsigned char id, unsigned long base, unsigned short sel, unsigned char flags);
 
-    void irq_uninstall_handler(int irq);
+void isr_load();
 
-    void irq_remap(void);
+void irq_install_handler(int irq, void (*handler)(struct regs *r));
 
-    void irq_install();
+void irq_uninstall_handler(int irq);
 
-};
+void irq_remap(void);
 
-
-
+void irq_install();
 
 #endif

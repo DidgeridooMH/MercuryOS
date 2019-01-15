@@ -1,5 +1,7 @@
 #include "io.h"
 
+static unsigned short* video_memory_addr = (unsigned short*)0xB8000;
+
 void io_init() {
   buffer_mode.width = 80;
   buffer_mode.height = 25;

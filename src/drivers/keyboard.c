@@ -2,10 +2,11 @@
 #include "io.h"
 #include "../runtime/memory.h"
 
-
 unsigned char keyboard_buffer[512];
 
 unsigned int keyboard_pointer = 0;
+
+struct keyboard_flags kb_flags = { 0, 0, 0, 0, 0, 0 };
 
 unsigned char kbdus[128] = {
     0,  0, '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', '\b', '\t',
@@ -25,43 +26,37 @@ unsigned char kbdus_shifted[128] = {
      0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 };
 
-kb_flags kb = { false, false, false, false, false, false };
-
 void keyboard_handler(struct regs* r) {
-  unsigned char scancode = Io::inportb(0x60);
+  unsigned char scancode = io_inportb(0x60);
 
   if(scancode & 0x80) {
-    update_flags(scancode & 0x7F);
+    keyboard_update_flags(scancode & 0x7F);
   } else {
     if(kbdus[scancode] > 0) {
-      if(kb.shift) {
+      if(kb_flags.shift) {
         keyboard_push(kbdus_shifted[scancode]);
       } else {
         keyboard_push(kbdus[scancode]);
       }
     }
-    update_flags(scancode);
+    keyboard_update_flags(scancode);
   }
 }
 
-void update_flags(unsigned char code) {
+void keyboard_update_flags(unsigned char code) {
   switch(code) {
     case 0x2A:
     case 0x36:
-      kb.shift = !kb.shift;
+      kb_flags.shift = !kb_flags.shift;
       break;
     case 0x1D:
-      kb.ctrl = !kb.ctrl;
+      kb_flags.ctrl = !kb_flags.ctrl;
       break;
     case 0xB8:
     case 0x38:
-      kb.alt = !kb.alt;
+      kb_flags.alt = !kb_flags.alt;
       break;
   }
-}
-
-unsigned int get_keyboard_pointer() {
-  return keyboard_pointer;
 }
 
 void keyboard_push(unsigned char data) {
@@ -80,11 +75,11 @@ unsigned char keyboard_pull() {
   return keyboard_buffer[keyboard_pointer];
 }
 
-void keyboard_install(x86* sys) {
-  sys->irq_install_handler(1, keyboard_handler);
-  memset(reinterpret_cast<char*>(keyboard_buffer), 0, 512);
+void keyboard_install() {
+  irq_install_handler(1, keyboard_handler);
+  memset((char*)keyboard_buffer, 0, 512);
 }
 
-unsigned char get_char(int keycode) {
+unsigned char keyboard_get_char(int keycode) {
   return kbdus[keycode];
 }
