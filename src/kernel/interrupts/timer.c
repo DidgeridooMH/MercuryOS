@@ -5,9 +5,9 @@ unsigned long timer_ticks = 0;
 
 void timer_phase() {
   int divisor = TIMER_CLOCK_SPEED;
-  outportb(TIMER_COMMAND_REGISTER, 0x36);
-  outportb(TIMER_CHANNEL_0, divisor & 0xFF);
-  outportb(TIMER_CHANNEL_0, divisor >> 8);
+  io_outportb(TIMER_COMMAND_REGISTER, 0x36);
+  io_outportb(TIMER_CHANNEL_0, divisor & 0xFF);
+  io_outportb(TIMER_CHANNEL_0, divisor >> 8);
 }
 
 void timer_handler(struct regs *r) {

@@ -12,7 +12,7 @@ unsigned int _virtual_address;
 
 unsigned char memory_bitmap[0x20000];
 
-void MMU::paging_load() {
+void paging_load() {
     unsigned int* pageDir = (unsigned int*)PAGE_DIR_ADDRESS;
 
     // memset((char*)memory_bitmap, 0, 0x20000);
@@ -26,12 +26,12 @@ void MMU::paging_load() {
         map_page((unsigned int*)i, (unsigned int*)i, 2);
     }
 
-    Heap::initialize_page_heap();
+    initialize_page_heap();
 
     enable_paging();
 }
 
-void MMU::map_page(void* physical_address, void* virtual_address, unsigned int flags) {
+void map_page(void* physical_address, void* virtual_address, unsigned int flags) {
     unsigned int page_dir_index = (unsigned int)virtual_address / 0x400000;
     unsigned int page_table_index = ((unsigned int)virtual_address % 0x400000) / 0x1000;
 
@@ -50,7 +50,7 @@ void MMU::map_page(void* physical_address, void* virtual_address, unsigned int f
     unsigned int* page_table = (unsigned int*)(PAGE_TABLE_ADDRESS + 0x1000 * page_dir_index);
 
     if(page_table[page_table_index] & 1) {
-        Io::printf("Paging error: page table already assigned...we should do something about that\n");
+        io_printf("Paging error: page table already assigned...we should do something about that\n");
         return;
     }
 
@@ -62,7 +62,7 @@ void MMU::map_page(void* physical_address, void* virtual_address, unsigned int f
          invlpg byte ptr [eax]");
 }
 
-void MMU::unmap_page(void* virtual_address) {
+void unmap_page(void* virtual_address) {
     unsigned int page_dir_index = (unsigned int)virtual_address / 0x400000;
     unsigned int page_table_index = ((unsigned int)virtual_address % 0x400000) / 0x1000;
     unsigned int* page_table = ((unsigned int*)PAGE_TABLE_ADDRESS) + 0x400 * page_dir_index;
@@ -70,7 +70,7 @@ void MMU::unmap_page(void* virtual_address) {
     page_table[page_table_index] = 0;
 }
 
-void MMU::enable_paging() {
+void enable_paging() {
     directoryAddr = PAGE_DIR_ADDRESS;
     asm("mov eax, directoryAddr     \n \
          mov cr3, eax               \n \
@@ -79,16 +79,14 @@ void MMU::enable_paging() {
          mov cr0, eax               \n");
 }
 
-void MMU::disable_paging() {
+void disable_paging() {
     asm("mov eax, 0x60000011        \n \
          mov cr0, eax               \n \
          mov eax, 0                 \n \
          mov cr3, eax               \n ");
 }
 
-void* MMU::get_next_available_virtual_address() {
-    unsigned int* page_dir = (unsigned int*)PAGE_DIR_ADDRESS;
-
+void* get_next_available_virtual_address() {
     for(int i = 3; i < 1024; i++) {
         unsigned int* table_ptr = ((unsigned int*)PAGE_TABLE_ADDRESS) + 0x400 * i;
         for(int j = 0; j < 1024; j++) {
@@ -98,14 +96,14 @@ void* MMU::get_next_available_virtual_address() {
         }
     }
 
-    return nullptr;
+    return (void*)(0);
 }
 
-void* MMU::kmalloc(unsigned long n) {
+void* kmalloc(unsigned long n) {
     if(n > 0x1000) {
-        Io::printf("WARNING: allocating more than a page of memory is not implemented");
-        return nullptr;
+        io_printf("WARNING: allocating more than a page of memory is not implemented");
+        return (void*)(0);
     }
 
-    return Heap::allocate_memory(0, n);
+    return allocate_memory(0, n);
 }
