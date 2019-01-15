@@ -31,7 +31,7 @@
 %endmacro
 
 
-extern interrupt_test
+extern system_interrupt_test
 
 global int32h
 
@@ -39,6 +39,6 @@ global int32h
 int32h:
     INT_SETUP 0x32
 
-    call interrupt_test
+    call system_interrupt_test
 
     INT_RESTORE

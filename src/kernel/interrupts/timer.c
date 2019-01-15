@@ -5,17 +5,17 @@ unsigned long timer_ticks = 0;
 
 void timer_phase() {
   int divisor = TIMER_CLOCK_SPEED;
-  Io::outportb(TIMER_COMMAND_REGISTER, 0x36);
-  Io::outportb(TIMER_CHANNEL_0, divisor & 0xFF);
-  Io::outportb(TIMER_CHANNEL_0, divisor >> 8);
+  outportb(TIMER_COMMAND_REGISTER, 0x36);
+  outportb(TIMER_CHANNEL_0, divisor & 0xFF);
+  outportb(TIMER_CHANNEL_0, divisor >> 8);
 }
 
 void timer_handler(struct regs *r) {
   timer_ticks++;
 }
 
-void timer_install(x86* sys) {
-  sys->irq_install_handler(0, timer_handler);
+void timer_install() {
+  irq_install_handler(0, timer_handler);
 }
 
 void timer_wait(int ticks) {

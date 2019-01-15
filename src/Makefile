@@ -24,6 +24,9 @@ all:
 	@echo "Compiling x86.c"
 	$(C) -c kernel/arch/x86/x86.c -o ../build/obj/x86.o $(FLAGS)
 
+	@echo "Compiling timer.c"
+	$(C) -c kernel/interrupts/timer.c -o ../build/obj/timer.o $(FLAGS)
+
 	@echo "Compiling kernel.c"
 	$(C) -c kernel/kernel.c -o ../build/obj/kernel.o $(FLAGS)
 
@@ -35,9 +38,6 @@ all:
 
 	@echo "Compiling itoa.c"
 	$(C) -c runtime/itoa.c -o ../build/obj/itoa.o $(FLAGS)
-
-	@echo "Compiling timer.c"
-	$(C) -c kernel/interrupts/timer.c -o ../build/obj/timer.o $(FLAGS)
 
 	@echo "Compiling shell.c"
 	$(C) -c shell/shell.c -o ../build/obj/shell.o $(FLAGS)
