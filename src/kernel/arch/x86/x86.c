@@ -8,7 +8,7 @@
 struct gdt_descriptor gdt;
 struct idt_descriptor idt;
 
-void x86::gdt_set_entry( int id,
+void gdt_set_entry( int id,
                     unsigned long base,
                     unsigned long limit,
                     unsigned char access,
@@ -25,7 +25,7 @@ void x86::gdt_set_entry( int id,
     gdt_entries[id].access = access;
 }
 
-void x86::gdt_load() {
+void gdt_load() {
     gdt.size = sizeof(struct gdt_entry) * 7;
     gdt.offset = GDT_BASE;
 
@@ -49,12 +49,12 @@ void x86::gdt_load() {
         reload_CS:          \n");
 }
 
-void x86::idt_set() {
+void idt_set() {
     memcpy((char*)idt.base, (char*)idt_entries, idt.limit);
     asm("lidt [idt]");
 }
 
-void x86::idt_load() {
+void idt_load() {
   idt.limit = sizeof(struct idt_entry) * 0xFF;
   idt.base = IDT_BASE;
 
@@ -64,7 +64,7 @@ void x86::idt_load() {
   irq_install();
 }
 
-void x86::idt_set_gate(  unsigned char id,
+void idt_set_gate(  unsigned char id,
                          unsigned long base,
                          unsigned short sel,
                          unsigned char flags) {
@@ -78,7 +78,7 @@ void x86::idt_set_gate(  unsigned char id,
     idt_entries[id].reserved = 0;
 }
 
-void x86::irq_install() {
+void irq_install() {
   irq_remap();
 
   idt_set_gate(32, (unsigned)irq0, 0x08, 0x8E);
@@ -99,7 +99,7 @@ void x86::irq_install() {
   idt_set_gate(47, (unsigned)irq15, 0x08, 0x8E);
 }
 
-void x86::isr_load() {
+void isr_load() {
   idt_set_gate(0, (unsigned)isr0, 0x08, 0x8E);
   idt_set_gate(1, (unsigned)isr1, 0x08, 0x8E);
   idt_set_gate(2, (unsigned)isr2, 0x08, 0x8E);
@@ -134,28 +134,28 @@ void x86::isr_load() {
   idt_set_gate(31, (unsigned)isr31, 0x08, 0x8E);
 }
 
-void x86::irq_install_handler(int irq, void (*handler)(struct regs *r)) {
+void irq_install_handler(int irq, void (*handler)(struct regs *r)) {
   irq_routines[irq] = handler;
 }
 
-void x86::irq_uninstall_handler(int irq) {
+void irq_uninstall_handler(int irq) {
   irq_routines[irq] = 0;
 }
 
-void x86::irq_remap(void) {
-  Io::outportb(0x20, 0x11);
-  Io::outportb(0xA0, 0x11);
-  Io::outportb(0x21, 0x20);
-  Io::outportb(0xA1, 0x28);
-  Io::outportb(0x21, 0x04);
-  Io::outportb(0xA1, 0x02);
-  Io::outportb(0x21, 0x01);
-  Io::outportb(0xA1, 0x01);
-  Io::outportb(0x21, 0x0);
-  Io::outportb(0xA1, 0x0);
+void irq_remap(void) {
+  io_outportb(0x20, 0x11);
+  io_outportb(0xA0, 0x11);
+  io_outportb(0x21, 0x20);
+  io_outportb(0xA1, 0x28);
+  io_outportb(0x21, 0x04);
+  io_outportb(0xA1, 0x02);
+  io_outportb(0x21, 0x01);
+  io_outportb(0xA1, 0x01);
+  io_outportb(0x21, 0x0);
+  io_outportb(0xA1, 0x0);
 }
 
-extern "C" void irq_handler(struct regs *r) {
+void irq_handler(struct regs *r) {
   void (*handler)(struct regs *r);
 
   handler = irq_routines[r->int_no - 32];
@@ -164,27 +164,27 @@ extern "C" void irq_handler(struct regs *r) {
   }
 
   if(r->int_no >= 40) {
-    Io::outportb(0xA0, 0x20);
+    io_outportb(0xA0, 0x20);
   }
 
-  Io::outportb(0x20, 0x20);
+  io_outportb(0x20, 0x20);
 }
 
-extern "C" void fault_handler(struct regs *r) {
+void fault_handler(struct regs *r) {
   if(r->int_no < 32) {
-    Io::printf("\n");
+    io_printf("\n");
     if(r->int_no > 18) {
-      Io::printf(exception_messages[19]);
-      Io::printf("\nException. System Halted!\n");
+      io_printf(exception_messages[19]);
+      io_printf("\nException. System Halted!\n");
   } else if(r->int_no == 14) {
-      Io::printf(exception_messages[14]);
-      Io::printf(page_fault_messages[r->ebx]);
-      Io::printf("\nException. System Halted!\n");
+      io_printf(exception_messages[14]);
+      io_printf(page_fault_messages[r->ebx]);
+      io_printf("\nException. System Halted!\n");
   } else {
-      Io::printf(exception_messages[r->int_no]);
-      Io::printf("\nException. System Halted!\n");
+      io_printf(exception_messages[r->int_no]);
+      io_printf("\nException. System Halted!\n");
     }
   }
 
-  while(true);
+  while(1);
 }

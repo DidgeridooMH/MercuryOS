@@ -28,9 +28,9 @@ void io_set_cursor(int x, int y);
 
 void io_scroll_screen();
 
-void io_outportb(unsigned int port, unsigned char data);
+void io_outportb(unsigned short port, unsigned char data);
 
-unsigned char io_inportb(unsigned int port);
+unsigned char io_inportb(unsigned short port);
 
 void io_printf(const char* str);
 

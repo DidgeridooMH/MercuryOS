@@ -1,6 +1,6 @@
 C=i386-elf-gcc
 ASM=nasm
-FLAGS=-std=gnu99 -ffreestanding -Wall -Wextra
+FLAGS=-std=gnu99 -ffreestanding -Wall -Wextra -masm=intel
 
 all:
 	@echo "Compiling multiboot.s"
@@ -21,14 +21,14 @@ all:
 	@echo "Compiling keyboard.c"
 	$(C) -c drivers/keyboard.c -o ../build/obj/keyboard.o $(FLAGS)
 
+	@echo "Compiling x86.c"
+	$(C) -c kernel/arch/x86/x86.c -o ../build/obj/x86.o $(FLAGS)
+
 	@echo "Compiling kernel.c"
 	$(C) -c kernel/kernel.c -o ../build/obj/kernel.o $(FLAGS)
 
 	@echo "Compiling string.c"
 	$(C) -c runtime/string.c -o ../build/obj/string.o $(FLAGS)
-
-	@echo "Compiling x86.c"
-	$(C) -c kernel/arch/x86/x86.c -o ../build/obj/x86.o $(FLAGS)
 
 	@echo "Compiling memory.c"
 	$(C) -c runtime/memory.c -o ../build/obj/memory.o $(FLAGS)
