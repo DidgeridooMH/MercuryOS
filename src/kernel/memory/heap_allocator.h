@@ -5,7 +5,6 @@
 
 namespace Heap {
 
-
     struct PageFrame {
         unsigned int process_id;
         unsigned int address;

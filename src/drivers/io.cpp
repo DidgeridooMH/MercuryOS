@@ -105,7 +105,7 @@ void Io::cursor_enable(unsigned char start, unsigned char end) {
     outportb(0x3D5, (inportb(0x3D5) & 0xC0) | start);
 
 	outportb(0x3D4, 0x0B);
-	outportb(0x3D5, (inportb(0x3E0) & 0xE0) | end);
+	outportb(0x3D5, (inportb(0x3D5) & 0xE0) | end);
 }
 
 void Io::cursor_disable() {

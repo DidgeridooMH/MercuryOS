@@ -47,7 +47,6 @@ void* Heap::allocate_memory(unsigned int process_id, unsigned int size) {
 
     int page_index = -1;
 
-    asm("xchg bx, bx");
     for(int i = 0; (i + 1) * sizeof(PageFrame) < 0x400000 && page_index < 0; i++) {
         if(process_ids[i].process_id == process_id
             && process_ids[i].size >= size
@@ -57,7 +56,15 @@ void* Heap::allocate_memory(unsigned int process_id, unsigned int size) {
     }
 
     if(page_index < 0) {
-        return nullptr;
+        // TODO: this needs to be more robust to account for large memory allocations.
+        void* new_frame_address = MMU::get_next_available_virtual_address();
+        MMU::map_page(new_frame_address, new_frame_address, 2);
+
+        if(create_frame(process_id, (unsigned int)new_frame_address, 0x1000) == nullptr) {
+            return nullptr;
+        }
+
+        return allocate_memory(process_id, size);
     }
 
     if(process_ids[page_index].size == size) {

@@ -18,6 +18,8 @@ namespace MMU {
 
     void disable_paging();
 
+    void* get_next_available_virtual_address();
+
     void* kmalloc(unsigned long n);
 
     void kfree(void* address);

@@ -10,12 +10,12 @@ unsigned int directoryAddr;
 
 unsigned int _virtual_address;
 
-unsigned int memory_bitmap[0x20000];
+unsigned char memory_bitmap[0x20000];
 
 void MMU::paging_load() {
     unsigned int* pageDir = (unsigned int*)PAGE_DIR_ADDRESS;
 
-    memset((char*)memory_bitmap, 0, 0x20000);
+    // memset((char*)memory_bitmap, 0, 0x20000);
 
     for(int i = 0; i < 1024; i++) {
         // Each table is 1024 entries * 4 bytes. The 2 marks it present and R/W.
@@ -55,7 +55,7 @@ void MMU::map_page(void* physical_address, void* virtual_address, unsigned int f
     }
 
     page_table[page_table_index] = ((unsigned int) physical_address) | (flags & 0xFFF) | 0x01;
-    memory_bitmap[page_dir_index * 0x80 + page_table_index / 8] |= 1 << (page_table_index % 8);
+    // memory_bitmap[page_dir_index * 0x80 + page_table_index / 8] |= 1 << (page_table_index % 8);
 
     _virtual_address = (unsigned int)virtual_address;
     asm("mov eax, _virtual_address \n \
@@ -66,7 +66,7 @@ void MMU::unmap_page(void* virtual_address) {
     unsigned int page_dir_index = (unsigned int)virtual_address / 0x400000;
     unsigned int page_table_index = ((unsigned int)virtual_address % 0x400000) / 0x1000;
     unsigned int* page_table = ((unsigned int*)PAGE_TABLE_ADDRESS) + 0x400 * page_dir_index;
-    memory_bitmap[page_dir_index * 0x80 + page_table_index / 8] ^= 1 << (page_table_index % 8);
+    // memory_bitmap[page_dir_index * 0x80 + page_table_index / 8] ^= 1 << (page_table_index % 8);
     page_table[page_table_index] = 0;
 }
 
@@ -86,7 +86,26 @@ void MMU::disable_paging() {
          mov cr3, eax               \n ");
 }
 
+void* MMU::get_next_available_virtual_address() {
+    unsigned int* page_dir = (unsigned int*)PAGE_DIR_ADDRESS;
 
-void* kmalloc(unsigned long n) {
+    for(int i = 3; i < 1024; i++) {
+        unsigned int* table_ptr = ((unsigned int*)PAGE_TABLE_ADDRESS) + 0x400 * i;
+        for(int j = 0; j < 1024; j++) {
+            if(!(table_ptr[j] & 1)) {
+                return (void*)(0x400000 * i + j * 0x1000);
+            }
+        }
+    }
 
+    return nullptr;
+}
+
+void* MMU::kmalloc(unsigned long n) {
+    if(n > 0x1000) {
+        Io::printf("WARNING: allocating more than a page of memory is not implemented");
+        return nullptr;
+    }
+
+    return Heap::allocate_memory(0, n);
 }
