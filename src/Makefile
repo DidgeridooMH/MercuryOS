@@ -1,6 +1,6 @@
-CPP=i386-elf-g++
+C=i386-elf-gcc
 ASM=nasm
-FLAGS=-ffreestanding -Wall -Wextra -fno-exceptions -fno-rtti -masm=intel -m32
+FLAGS=-std=gnu99 -ffreestanding -Wall -Wextra -masm=intel
 
 all:
 	@echo "Compiling multiboot.s"
@@ -15,38 +15,38 @@ all:
 	@echo "Compiling system_calls.s"
 	$(ASM) -f elf32 -o ../build/obj/system_calls_s.o kernel/interrupts/system_calls.S
 
-	@echo "Compiling kernel.cpp"
-	$(CPP) -c kernel/kernel.cpp -o ../build/obj/kernel.o $(FLAGS)
+	@echo "Compiling io.c"
+	$(C) -c drivers/io.c -o ../build/obj/io.o $(FLAGS)
 
-	@echo "Compiling vga.cpp"
-	$(CPP) -c drivers/io.cpp -o ../build/obj/io.o $(FLAGS)
+	@echo "Compiling keyboard.c"
+	$(C) -c drivers/keyboard.c -o ../build/obj/keyboard.o $(FLAGS)
 
-	@echo "Compiling string.cpp"
-	$(CPP) -c runtime/string.cpp -o ../build/obj/string.o $(FLAGS)
+	@echo "Compiling x86.c"
+	$(C) -c kernel/arch/x86/x86.c -o ../build/obj/x86.o $(FLAGS)
 
-	@echo "Compiling x86.cpp"
-	$(CPP) -c kernel/arch/x86/x86.cpp -o ../build/obj/x86.o $(FLAGS)
+	@echo "Compiling timer.c"
+	$(C) -c kernel/interrupts/timer.c -o ../build/obj/timer.o $(FLAGS)
 
-	@echo "Compiling memory.cpp"
-	$(CPP) -c runtime/memory.cpp -o ../build/obj/memory.o $(FLAGS)
+	@echo "Compiling mmu.c"
+	$(C) -c kernel/memory/mmu.c -o ../build/obj/mmu.o $(FLAGS)
 
-	@echo "Compiling itoa.cpp"
-	$(CPP) -c runtime/itoa.cpp -o ../build/obj/itoa.o $(FLAGS)
+	@echo "Compiling heap_allocator.c"
+	$(C) -c kernel/memory/heap_allocator.c -o ../build/obj/heap_allocator.o $(FLAGS)
 
-	@echo "Compiling timer.cpp"
-	$(CPP) -c kernel/interrupts/timer.cpp -o ../build/obj/timer.o $(FLAGS)
+	@echo "Compiling kernel.c"
+	$(C) -c kernel/kernel.c -o ../build/obj/kernel.o $(FLAGS)
 
-	@echo "Compiling keyboard.cpp"
-	$(CPP) -c drivers/keyboard.cpp -o ../build/obj/keyboard.o $(FLAGS)
+	@echo "Compiling string.c"
+	$(C) -c runtime/string.c -o ../build/obj/string.o $(FLAGS)
 
-	@echo "Compiling shell.cpp"
-	$(CPP) -c shell/shell.cpp -o ../build/obj/shell.o $(FLAGS)
+	@echo "Compiling memory.c"
+	$(C) -c runtime/memory.c -o ../build/obj/memory.o $(FLAGS)
 
-	@echo "Compiling system_calls.cpp"
-	$(CPP) -c kernel/interrupts/system_calls.cpp -o ../build/obj/system_calls.o $(FLAGS)
+	@echo "Compiling itoa.c"
+	$(C) -c runtime/itoa.c -o ../build/obj/itoa.o $(FLAGS)
 
-	@echo "Compiling mmu.cpp"
-	$(CPP) -c kernel/memory/mmu.cpp -o ../build/obj/mmu.o $(FLAGS)
+	@echo "Compiling shell.c"
+	$(C) -c shell/shell.c -o ../build/obj/shell.o $(FLAGS)
 
-	@echo "Compiling heap_allocator.cpp"
-	$(CPP) -c kernel/memory/heap_allocator.cpp -o ../build/obj/heap_allocator.o $(FLAGS)
+	@echo "Compiling system_calls.c"
+	$(C) -c kernel/interrupts/system_calls.c -o ../build/obj/system_calls.o $(FLAGS)

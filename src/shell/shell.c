@@ -32,28 +32,28 @@ void shell_prompt() {
   memset(command, 0, 256);
   int command_index = 0;
   command[0] = '\0';
-  Io::printf(">");
+  io_printf(">");
 
-  bool processed = false;
+  int processed = 0;
   while(!processed){
-    if(get_keyboard_pointer() > 0) {
+    if(keyboard_get_pointer() > 0) {
       char keyPress = keyboard_pull();
       if(keyPress == '\b') {
         if(command_index > 0) {
-          Io::put_char(keyPress);
+          io_put_char(keyPress);
           shell_remove_from_buffer(command, &command_index);
         }
       } else if(command_index < 255) {
-        Io::put_char(keyPress);
+        io_put_char(keyPress);
         if(shell_update_buffer(command, &command_index, keyPress)){
-          processed = true;
+          processed = 1;
         }
       } else {
         if(keyPress == '\n') {
-            Io::put_char(keyPress);
+            io_put_char(keyPress);
         }
         if(shell_update_buffer(command, &command_index, keyPress)){
-          processed = true;
+          processed = 1;
         }
       }
     }
@@ -64,7 +64,7 @@ void program_load_test() {
     unsigned char shell_code[11] = { 0xB8, 0x00, 0x80, 0x0B, 0x00,
         0x66, 0xC7, 0x00, 0x48, 0xFF, 0xC3 };
 
-    unsigned char* program_block = static_cast<unsigned char*>(MMU::kmalloc(11));
+    unsigned char* program_block = (unsigned char*)kmalloc(11);
 
     for (int i = 0; i < 11; i++) {
         program_block[i] = shell_code[i];
@@ -72,7 +72,7 @@ void program_load_test() {
 
     ((void(*)())program_block)();
 
-    Heap::deallocate_memory(program_block);
+    deallocate_memory(program_block);
 
 }
 
@@ -82,12 +82,12 @@ void shell_process_command(char* command) {
     } else if(strcmp(command, "test") == 0) {
         program_load_test();
     } else {
-        Io::printf("Unable to execute command ");
-        Io::printf(command);
-        Io::printf("\n");
+        io_printf("Unable to execute command ");
+        io_printf(command);
+        io_printf("\n");
     }
 }
 
 void shell_shutdown() {
-  Io::printf("Shutdown\n");
+  io_printf("Shutdown\n");
 }

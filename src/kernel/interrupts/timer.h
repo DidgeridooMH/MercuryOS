@@ -9,7 +9,7 @@
 
 void timer_phase();
 void timer_handler(struct regs *r);
-void timer_install(x86* sys);
+void timer_install();
 void timer_wait(int ticks);
 
 #endif

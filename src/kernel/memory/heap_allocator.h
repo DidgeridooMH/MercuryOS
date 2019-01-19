@@ -3,29 +3,26 @@
 
 #define PAGE_HEAP_ADDRESS 0x800000
 
-namespace Heap {
+struct page_frame {
+    unsigned int process_id;
+    unsigned int address;
+    unsigned int size;
+    struct page_frame*   prev;
+    struct page_frame*   next;
+    unsigned char free;
+    unsigned char slot_free;
+} __attribute__((packed));
 
-    struct PageFrame {
-        unsigned int process_id;
-        unsigned int address;
-        unsigned int size;
-        PageFrame*   prev;
-        PageFrame*   next;
-        bool         free;
-        bool         slot_free;
-    } __attribute__((packed));
+void initialize_page_heap();
 
-    void initialize_page_heap();
+struct page_frame* create_frame(unsigned int process_id, unsigned int address, unsigned int size);
 
-    PageFrame* create_frame(unsigned int process_id, unsigned int address, unsigned int size);
+void delete_frame(unsigned int process_id);
 
-    void delete_frame(unsigned int process_id);
+void* allocate_memory(unsigned int process_id, unsigned int size);
 
-    void* allocate_memory(unsigned int process_id, unsigned int size);
+void deallocate_memory(void* address);
 
-    void deallocate_memory(void* address);
-
-    void merge_contiguous(PageFrame* frame);
-}
+void merge_contiguous(struct page_frame* frame);
 
 #endif

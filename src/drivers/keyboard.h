@@ -3,21 +3,27 @@
 
 #include "../kernel/arch/x86/x86.h"
 
-typedef struct {
-  bool shift;
-  bool ctrl;
-  bool alt;
-  bool caps_lock;
-  bool num_lock;
-  bool scroll_lock;
-} kb_flags;
+struct keyboard_flags {
+  unsigned char shift;
+  unsigned char ctrl;
+  unsigned char alt;
+  unsigned char caps_lock;
+  unsigned char num_lock;
+  unsigned char scroll_lock;
+};
 
 void keyboard_handler(struct regs* r);
-void update_flags(unsigned char code);
-unsigned int get_keyboard_pointer();
+
+unsigned int keyboard_get_pointer();
+
+void keyboard_update_flags(unsigned char code);
+
 void keyboard_push(unsigned char data);
+
 unsigned char keyboard_pull();
-void keyboard_install(x86* sys);
-unsigned char get_char(int keycode);
+
+void keyboard_install();
+
+unsigned char keyboard_get_char(int keycode);
 
 #endif
