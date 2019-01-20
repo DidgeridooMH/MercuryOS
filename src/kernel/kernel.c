@@ -10,6 +10,7 @@
 int init() {
     io_init();
     io_printf("Video context loaded\n");
+    while(1);
 
     gdt_load(GDT_BASE);
     io_printf("GDT set\n");
