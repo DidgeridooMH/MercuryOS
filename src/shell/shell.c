@@ -5,6 +5,7 @@
 #include "../runtime/string.h"
 #include "../drivers/io.h"
 #include "../runtime/itoa.h"
+#include "../kernel/acpi/acpi.h"
 
 void shell_remove_from_buffer(char* buffer, int* index) {
   index[0]--;
@@ -88,5 +89,5 @@ void shell_process_command(char* command) {
 }
 
 void shell_shutdown() {
-  io_printf("Shutdown\n");
+    acpi_shutdown();
 }

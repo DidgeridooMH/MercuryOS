@@ -21,7 +21,7 @@ void paging_load() {
         pageDir[i] = PAGE_TABLE_ADDRESS + 0x1000 * i + 2;
     }
 
-    for(int i = 0x2000; i < 0x800000; i += 0x1000) {
+    for(int i = 0x3000; i < 0x800000; i += 0x1000) {
         map_page((unsigned int*)i, (unsigned int*)i, 2);
     }
 
@@ -37,12 +37,14 @@ void paging_load() {
     _paging_enabled = 1;
 
     // Remap and reload GDT/IDT and unmap temp
-    map_page((unsigned int*)0x0, (unsigned int*)0xC0000000, 2);
+    map_page((unsigned int*)IDT_BASE, (unsigned int*)0xC0000000, 2);
     gdt_load(GDT_VIRTUAL_BASE);
     idt_load(IDT_VIRTUAL_BASE);
-    unmap_page((unsigned int*)0);
+    unmap_page((unsigned int*)IDT_BASE);
 
     map_page((unsigned int*)0x100000, (unsigned int*)0xC0002000, 2);
+    map_page((unsigned int*)0x101000, (unsigned int*)0xC0003000, 2);
+    map_page((unsigned int*)0x102000, (unsigned int*)0xC0004000, 2);
     asm("call next      \n \
          next: pop eax  \n \
          add eax, _kernel_virtual_jump \n \

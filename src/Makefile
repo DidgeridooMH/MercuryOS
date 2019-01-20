@@ -47,3 +47,6 @@ all:
 
 	@echo "Compiling system_calls.c"
 	$(C) -c kernel/interrupts/system_calls.c -o ../build/obj/system_calls.o $(FLAGS)
+
+	@echo "Compiling acpi.c"
+	$(C) -c kernel/acpi/acpi.c -o ../build/obj/acpi.o $(FLAGS)
