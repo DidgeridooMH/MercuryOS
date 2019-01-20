@@ -30,9 +30,6 @@ all:
 	@echo "Compiling mmu.c"
 	$(C) -c kernel/memory/mmu.c -o ../build/obj/mmu.o $(FLAGS)
 
-	@echo "Compiling heap_allocator.c"
-	$(C) -c kernel/memory/heap_allocator.c -o ../build/obj/heap_allocator.o $(FLAGS)
-
 	@echo "Compiling kernel.c"
 	$(C) -c kernel/kernel.c -o ../build/obj/kernel.o $(FLAGS)
 

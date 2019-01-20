@@ -1,46 +1,66 @@
 #include "mmu.h"
-#include "heap_allocator.h"
 #include "../../drivers/io.h"
 #include "../../runtime/itoa.h"
 #include "../../runtime/memory.h"
+#include "../arch/x86/x86.h"
+#include "../kernel.h"
 
-// TODO: Decide on a code style.
-
-unsigned int directoryAddr;
+unsigned int _directory_address;
 
 unsigned int _virtual_address;
 
-unsigned char memory_bitmap[0x20000];
+int _paging_enabled = 0;
+
+static unsigned int _kernel_virtual_jump = KERNEL_VIRTUAL_JUMP;
 
 void paging_load() {
     unsigned int* pageDir = (unsigned int*)PAGE_DIR_ADDRESS;
 
-    // memset((char*)memory_bitmap, 0, 0x20000);
-
-    for(int i = 0; i < 1024; i++) {
+    for(int i = 0; i < 0x400; i++) {
         // Each table is 1024 entries * 4 bytes. The 2 marks it present and R/W.
         pageDir[i] = PAGE_TABLE_ADDRESS + 0x1000 * i + 2;
     }
 
-    for(int i = 0; i < 0x800000; i += 0x1000) {
+    for(int i = 0x2000; i < 0x800000; i += 0x1000) {
         map_page((unsigned int*)i, (unsigned int*)i, 2);
     }
 
-    initialize_page_heap();
+    // Map page directory
+    unsigned int* pd_virtual_address = (unsigned int*)VIRTUAL_PD_ADDRESS;
+    map_page(pageDir, pd_virtual_address, 2);
+
+    // Temporarily identity map the GDT/IDT
+    map_page(0, 0, 2);
 
     enable_paging();
+
+    _paging_enabled = 1;
+
+    // Remap and reload GDT/IDT and unmap temp
+    map_page((unsigned int*)0x0, (unsigned int*)0xC0000000, 2);
+    gdt_load(GDT_VIRTUAL_BASE);
+    idt_load(IDT_VIRTUAL_BASE);
+    unmap_page((unsigned int*)0);
+
+    map_page((unsigned int*)0x100000, (unsigned int*)0xC0002000, 2);
+    asm("call next      \n \
+         next: pop eax  \n \
+         add eax, _kernel_virtual_jump \n \
+         jmp eax");
+    unmap_page((unsigned int*)0x100000);
+    kmain();
 }
 
 void map_page(void* physical_address, void* virtual_address, unsigned int flags) {
     unsigned int page_dir_index = (unsigned int)virtual_address / 0x400000;
     unsigned int page_table_index = ((unsigned int)virtual_address % 0x400000) / 0x1000;
 
-    unsigned int* page_dir = (unsigned int*)PAGE_DIR_ADDRESS;
+    unsigned int* page_dir = (unsigned int*)(_paging_enabled ? VIRTUAL_PD_ADDRESS : PAGE_DIR_ADDRESS);
 
     // Check if the page directory entry is present. If not, create a new table.
     if(!(page_dir[page_dir_index] & 1)) {
         unsigned int* table_ptr = ((unsigned int*)PAGE_TABLE_ADDRESS) + 0x400 * page_dir_index;
-        for(int i = 0; i < 1024; i++) {
+        for(int i = 0; i < 0x400; i++) {
             // Mark not present
             table_ptr[i] = 0;
         }
@@ -55,7 +75,6 @@ void map_page(void* physical_address, void* virtual_address, unsigned int flags)
     }
 
     page_table[page_table_index] = ((unsigned int) physical_address) | (flags & 0xFFF) | 0x01;
-    // memory_bitmap[page_dir_index * 0x80 + page_table_index / 8] |= 1 << (page_table_index % 8);
 
     _virtual_address = (unsigned int)virtual_address;
     asm("mov eax, _virtual_address \n \
@@ -66,13 +85,12 @@ void unmap_page(void* virtual_address) {
     unsigned int page_dir_index = (unsigned int)virtual_address / 0x400000;
     unsigned int page_table_index = ((unsigned int)virtual_address % 0x400000) / 0x1000;
     unsigned int* page_table = ((unsigned int*)PAGE_TABLE_ADDRESS) + 0x400 * page_dir_index;
-    // memory_bitmap[page_dir_index * 0x80 + page_table_index / 8] ^= 1 << (page_table_index % 8);
     page_table[page_table_index] = 0;
 }
 
 void enable_paging() {
-    directoryAddr = PAGE_DIR_ADDRESS;
-    asm("mov eax, directoryAddr     \n \
+    _directory_address = (unsigned int)PAGE_DIR_ADDRESS;
+    asm("mov eax, _directory_address     \n \
          mov cr3, eax               \n \
          mov eax, cr0               \n \
          or eax, 0x80000001         \n \
@@ -99,11 +117,11 @@ void* get_next_available_virtual_address() {
     return (void*)(0);
 }
 
-void* kmalloc(unsigned long n) {
-    if(n > 0x1000) {
-        io_printf("WARNING: allocating more than a page of memory is not implemented");
-        return (void*)(0);
-    }
-
-    return allocate_memory(0, n);
-}
+// void* kmalloc(unsigned long n) {
+//     if(n > 0x1000) {
+//         io_printf("WARNING: allocating more than a page of memory is not implemented");
+//         return (void*)(0);
+//     }
+//
+//     return allocate_memory(0, n);
+// }

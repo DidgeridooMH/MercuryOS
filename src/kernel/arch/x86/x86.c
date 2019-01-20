@@ -4,6 +4,7 @@
 #include "../../../drivers/io.h"
 #include "../../../runtime/memory.h"
 #include "../../../runtime/itoa.h"
+#include "../../interrupts/system_calls.h"
 
 struct gdt_descriptor gdt;
 struct idt_descriptor idt;
@@ -25,9 +26,9 @@ void gdt_set_entry( int id,
     gdt_entries[id].access = access;
 }
 
-void gdt_load() {
+void gdt_load(unsigned int address) {
     gdt.size = sizeof(struct gdt_entry) * 7;
-    gdt.offset = GDT_BASE;
+    gdt.offset = address;
 
     gdt_set_entry(0, 0, 0, 0, 0);
     gdt_set_entry(1, 0, 0xFFFFFFFF, 0x9B, 0xCF);
@@ -54,14 +55,18 @@ void idt_set() {
     asm("lidt [idt]");
 }
 
-void idt_load() {
+void idt_load(unsigned int address) {
   idt.limit = sizeof(struct idt_entry) * 0xFF;
-  idt.base = IDT_BASE;
+  idt.base = address;
 
   memset((char*)idt_entries, 0, sizeof(struct idt_entry) * 256);
 
   isr_load();
   irq_install();
+
+  system_calls_install();
+
+  idt_set();
 }
 
 void idt_set_gate(  unsigned char id,

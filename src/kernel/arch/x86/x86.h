@@ -5,6 +5,9 @@
 #define GDT_BASE 0x00000800
 #define IDT_BASE 0x00000000
 
+#define GDT_VIRTUAL_BASE 0xC0000800
+#define IDT_VIRTUAL_BASE 0xC0000000
+
 #include "system.h"
 
 struct gdt_entry {
@@ -38,7 +41,7 @@ struct idt_descriptor {
 struct gdt_entry gdt_entries[GDT_SIZE];
 struct idt_entry idt_entries[256];
 
-void gdt_load();
+void gdt_load(unsigned int address);
 void gdt_set_entry(int id, unsigned long base, unsigned long limit,
                     unsigned char access, unsigned char flags);
 

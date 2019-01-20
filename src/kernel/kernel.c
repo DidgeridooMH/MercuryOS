@@ -7,20 +7,15 @@
 #include "../runtime/itoa.h"
 #include "memory/mmu.h"
 
-int kmain() {
+int init() {
     io_init();
     io_printf("Video context loaded\n");
 
-    gdt_load();
+    gdt_load(GDT_BASE);
     io_printf("GDT set\n");
 
-    idt_load();
+    idt_load(IDT_BASE);
     io_printf("IDT populated\n");
-
-    system_calls_install();
-    io_printf("System Calls Installed\n");
-
-    idt_set();
 
     timer_install();
     timer_phase();
@@ -31,6 +26,10 @@ int kmain() {
 
     paging_load();
 
+    return 0;
+}
+
+void kmain() {
     io_clear_screen();
     io_printf("Mercury OS 0.0.2 Alpha\n\n");
 
@@ -39,6 +38,4 @@ int kmain() {
     while(1) {
         shell_prompt();
     }
-
-    return 0;
 }

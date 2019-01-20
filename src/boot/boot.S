@@ -26,8 +26,8 @@ multiboot:
   dd start
 
 boot:
-  extern kmain
-  call kmain
+  extern init
+  call init
   jmp $
 
 SECTION .bss
