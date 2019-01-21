@@ -3,7 +3,6 @@
 #include "../../runtime/itoa.h"
 #include "../../runtime/memory.h"
 #include "../arch/x86/x86.h"
-#include "../kernel.h"
 
 unsigned int _directory_address;
 
@@ -11,53 +10,42 @@ unsigned int _virtual_address;
 
 int _paging_enabled = 0;
 
-static unsigned int _kernel_virtual_jump = KERNEL_VIRTUAL_JUMP;
-
 void paging_load() {
-    unsigned int* pageDir = (unsigned int*)PAGE_DIR_ADDRESS;
+    unsigned int* page_directory = (unsigned int*)PAGE_DIR_ADDRESS;
 
     for(int i = 0; i < 0x400; i++) {
-        // Each table is 1024 entries * 4 bytes. The 2 marks it present and R/W.
-        pageDir[i] = PAGE_TABLE_ADDRESS + 0x1000 * i + 2;
+        // Each table is 1024 entries * 4 bytes. The 2 marks it R/W.
+        page_directory[i] = 2;
     }
 
-    for(int i = 0x3000; i < 0x800000; i += 0x1000) {
-        map_page((unsigned int*)i, (unsigned int*)i, 2);
-    }
-
-    // Map page directory
-    unsigned int* pd_virtual_address = (unsigned int*)VIRTUAL_PD_ADDRESS;
-    map_page(pageDir, pd_virtual_address, 2);
-
-    // Temporarily identity map the GDT/IDT
-    map_page(0, 0, 2);
+    map_page_pse(0x0, 0xC0000000, 2);
 
     enable_paging();
+}
 
-    _paging_enabled = 1;
+void map_page_pse(void* physical_address, void* virtual_address, unsigned int flags) {
+    unsigned int page_dir_index = (unsigned int) virtual_address / 0x400000;
 
-    // Remap and reload GDT/IDT and unmap temp
-    map_page((unsigned int*)IDT_BASE, (unsigned int*)0xC0000000, 2);
-    gdt_load(GDT_VIRTUAL_BASE);
-    idt_load(IDT_VIRTUAL_BASE);
-    unmap_page((unsigned int*)IDT_BASE);
+    unsigned int* page_dir = (unsigned int*)(PAGE_DIR_ADDRESS);
 
-    map_page((unsigned int*)0x100000, (unsigned int*)0xC0002000, 2);
-    map_page((unsigned int*)0x101000, (unsigned int*)0xC0003000, 2);
-    map_page((unsigned int*)0x102000, (unsigned int*)0xC0004000, 2);
-    asm("call next      \n \
-         next: pop eax  \n \
-         add eax, _kernel_virtual_jump \n \
-         jmp eax");
-    unmap_page((unsigned int*)0x100000);
-    kmain();
+    if(page_dir[page_dir_index] & 1) {
+        io_printf("Paging error: pse index already assigned...we should do something about that\n");
+    }
+
+    page_dir[page_dir_index] = (((unsigned int)physical_address >> 22) / 4) | 0x81 | flags;
+}
+
+void unmap_page_pse(void* virtual_address) {
+    unsigned int page_dir_index = (unsigned int)virtual_address >> 22;
+    unsigned int* page_dir = (unsigned int*)PAGE_DIR_ADDRESS;
+    page_dir[page_dir_index] = 0x2;
 }
 
 void map_page(void* physical_address, void* virtual_address, unsigned int flags) {
     unsigned int page_dir_index = (unsigned int)virtual_address / 0x400000;
     unsigned int page_table_index = ((unsigned int)virtual_address % 0x400000) / 0x1000;
 
-    unsigned int* page_dir = (unsigned int*)(_paging_enabled ? VIRTUAL_PD_ADDRESS : PAGE_DIR_ADDRESS);
+    unsigned int* page_dir = (unsigned int*)(PAGE_DIR_ADDRESS);
 
     // Check if the page directory entry is present. If not, create a new table.
     if(!(page_dir[page_dir_index] & 1)) {
@@ -91,7 +79,7 @@ void unmap_page(void* virtual_address) {
 }
 
 void enable_paging() {
-    _directory_address = (unsigned int)PAGE_DIR_ADDRESS;
+    _directory_address = PAGE_PHYSICAL_ADDRESS;
     asm("mov eax, _directory_address     \n \
          mov cr3, eax               \n \
          mov eax, cr0               \n \

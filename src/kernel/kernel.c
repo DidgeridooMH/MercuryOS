@@ -7,10 +7,9 @@
 #include "../runtime/itoa.h"
 #include "memory/mmu.h"
 
-int init() {
+int kmain() {
     io_init();
     io_printf("Video context loaded\n");
-    while(1);
 
     gdt_load(GDT_BASE);
     io_printf("GDT set\n");
@@ -27,10 +26,6 @@ int init() {
 
     paging_load();
 
-    return 0;
-}
-
-void kmain() {
     io_clear_screen();
     io_printf("Mercury OS 0.0.2 Alpha\n\n");
 
@@ -39,4 +34,6 @@ void kmain() {
     while(1) {
         shell_prompt();
     }
+
+    return 0;
 }

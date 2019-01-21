@@ -2,11 +2,8 @@
 #define GDT_H
 
 #define GDT_SIZE 0xFF
-#define GDT_BASE 0x00001800
-#define IDT_BASE 0x00001000
-
-#define GDT_VIRTUAL_BASE 0xC0000800
-#define IDT_VIRTUAL_BASE 0xC0000000
+#define GDT_BASE 0xC0002800
+#define IDT_BASE 0xC0002000
 
 #include "system.h"
 

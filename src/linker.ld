@@ -5,7 +5,7 @@ KERNEL_VIRTUAL_BASE = 0xC0000000;
 
 SECTIONS {
     . = 0x00100000;
-    .multiboot.data : {
+    .multiboot.data ALIGN(4) : {
         *(.multiboot.data)
     }
 

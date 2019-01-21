@@ -1,7 +1,7 @@
 [BITS 32]
 
 global entry
-extern init
+extern kmain
 
 MBALIGN  equ 1<<0
 MEMINFO  equ 1<<1
@@ -34,6 +34,10 @@ entry:
     mov ecx, BootPageDirectory
     mov cr3, ecx
 
+    mov ecx, cr4
+    or ecx, 0x10
+    mov cr4, ecx
+
     mov ecx, cr0
     or ecx, 0x80000000
     mov cr0, ecx
@@ -49,8 +53,7 @@ section .text
     push eax
     add ebx, KERNEL_VIRTUAL_BASE
     push ebx
-    xchg bx, bx
-    call init
+    call kmain
 
     cli
 .endloop:
