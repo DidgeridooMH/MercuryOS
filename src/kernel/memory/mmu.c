@@ -19,6 +19,10 @@ void paging_load() {
     }
 
     map_page_pse(0x0, 0xC0000000, 2);
+    map_page_pse(0x400000, 0xC0400000, 2);
+    map_page_pse(0x800000, 0xC0800000, 2);
+    map_page_pse(0x800000, 0xC0C00000, 2);
+    map_page_pse(0x800000, 0xC1000000, 2);
 
     enable_paging();
 }
@@ -31,8 +35,9 @@ void map_page_pse(void* physical_address, void* virtual_address, unsigned int fl
     if(page_dir[page_dir_index] & 1) {
         io_printf("Paging error: pse index already assigned...we should do something about that\n");
     }
-
-    page_dir[page_dir_index] = (((unsigned int)physical_address >> 22) / 4) | 0x81 | flags;
+    page_dir[page_dir_index] = (unsigned int)physical_address | 0x81 | flags;
+    asm("mov eax, _virtual_address \n \
+         invlpg byte ptr [eax]");
 }
 
 void unmap_page_pse(void* virtual_address) {
