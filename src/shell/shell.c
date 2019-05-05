@@ -61,19 +61,7 @@ void shell_prompt() {
 }
 
 void program_load_test() {
-    // unsigned char shell_code[11] = { 0xB8, 0x00, 0x80, 0x0B, 0x00,
-    //     0x66, 0xC7, 0x00, 0x48, 0xFF, 0xC3 };
-    //
-    // unsigned char* program_block = (unsigned char*)kmalloc(11);
-    //
-    // for (int i = 0; i < 11; i++) {
-    //     program_block[i] = shell_code[i];
-    // }
-    //
-    // ((void(*)())program_block)();
-    //
-    // deallocate_memory(program_block);
-
+    
 }
 
 void shell_process_command(char* command) {

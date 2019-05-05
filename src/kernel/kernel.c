@@ -25,6 +25,10 @@ int kmain() {
     io_printf("Keyboard irq initialized\n");
 
     paging_load();
+    io_printf("Paging enabled\n");
+
+    memory_init();
+    io_printf("Memory allocation has been established...\n");
 
     io_clear_screen();
     io_printf("Mercury OS 0.0.2 Alpha\n\n");
