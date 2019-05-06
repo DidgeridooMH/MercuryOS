@@ -1,6 +1,8 @@
 #ifndef IO_H
 #define IO_H
 
+#define VIDEO_MEMORY_ADDRESS 0xC00B8000
+
 struct io_buffer_mode {
   int width;
   int height;

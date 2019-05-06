@@ -7,7 +7,7 @@
 #include "../runtime/itoa.h"
 #include "memory/mmu.h"
 
-int init() {
+int kmain() {
     io_init();
     io_printf("Video context loaded\n");
 
@@ -25,11 +25,11 @@ int init() {
     io_printf("Keyboard irq initialized\n");
 
     paging_load();
+    io_printf("Paging enabled\n");
 
-    return 0;
-}
+    memory_init();
+    io_printf("Memory allocation has been established...\n");
 
-void kmain() {
     io_clear_screen();
     io_printf("Mercury OS 0.0.2 Alpha\n\n");
 
@@ -38,4 +38,6 @@ void kmain() {
     while(1) {
         shell_prompt();
     }
+
+    return 0;
 }
