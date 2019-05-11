@@ -7,6 +7,9 @@
 #include "../runtime/itoa.h"
 #include "memory/mmu.h"
 
+#define MAJOR_VERSION 0
+#define MINOR_VERSION 2
+
 int kmain() {
     io_init();
     io_printf("Video context loaded\n");
@@ -31,7 +34,16 @@ int kmain() {
     io_printf("Memory allocation has been established...\n");
 
     io_clear_screen();
-    io_printf("Mercury OS 0.0.2 Alpha\n\n");
+    io_set_color(TTY_COLOR_LIGHT_CYAN, TTY_COLOR_BLACK);
+    io_printf("===================================================\n"
+              " _____                                _____  _____ \n"
+              "|     | ___  ___  ___  _ _  ___  _ _ |     ||   __|\n"
+              "| | | || -_||  _||  _|| | ||  _|| | ||  |  ||__   |\n"
+              "|_|_|_||___||_|  |___||___||_|  |_  ||_____||_____|\n"
+              "                                |___|\n"
+              "===================================================\n");
+    io_printf("Version: %d.%d\n", MAJOR_VERSION, MINOR_VERSION);
+    io_set_color(TTY_COLOR_WHITE, TTY_COLOR_BLACK);
 
     asm("sti");
 

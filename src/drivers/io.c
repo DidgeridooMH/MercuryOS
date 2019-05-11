@@ -1,4 +1,7 @@
 #include "io.h"
+#include "../runtime/stdarg.h"
+#include "../runtime/itoa.h"
+#include "../kernel/memory/mmu.h"
 
 static unsigned short* video_memory_addr = (unsigned short*)VIDEO_MEMORY_ADDRESS;
 
@@ -17,6 +20,16 @@ void io_outportb(unsigned short port, unsigned char data) {
 unsigned char io_inportb(unsigned short port) {
   unsigned char ret;
   __asm__ __volatile__ ("inb %0, %1" : "=a" (ret) : "dN" (port));
+  return ret;
+}
+
+void io_outportw(unsigned short port, unsigned short data) {
+  __asm__ __volatile__ ("outw %0, %1" : : "dN" (port), "a" (data));
+}
+
+unsigned short io_inportw(unsigned short port) {
+  unsigned short ret;
+  __asm__ __volatile__ ("inw %0, %1" : "=a" (ret) : "dN" (port));
   return ret;
 }
 
@@ -87,12 +100,77 @@ void io_clear_screen() {
   io_set_cursor(0, 0);
 }
 
-void io_printf(const char* str) {
-  int index = 0;
-  while(str[index] != '\0') {
-    io_put_char(str[index]);
-    index++;
-  }
+void io_print_i(int i) {
+    char *num = kmalloc(16);
+    if(i < 0) {
+        io_put_char('-');
+        i *= -1;
+    }
+    itoa(num, i, 10);
+    io_printf(num);
+    kfree(num);
+}
+
+void io_print_o(int i) {
+    char *num = kmalloc(16);
+    itoa(num, i, 8);
+    io_printf(num);
+    kfree(num);
+}
+
+void io_print_u(unsigned int u) {
+    char *num = kmalloc(16);
+    itoa(num, u, 10);
+    io_printf(num);
+    kfree(num);
+}
+
+void io_print_x(int x) {
+    char *num = kmalloc(16);
+    itoa(num, x, 16);
+    io_printf(num);
+    kfree(num);
+}
+
+void io_printf(char* format, ...) {
+    va_list args;
+    va_start(args, format);
+    int index = 0;
+    while(format[index] != '\0') {
+        if(format[index] == '%') {
+            index++;
+            switch(format[index]) {
+                case 'c':
+                    io_put_char(va_arg(args, char));
+                    break;
+                case 'd':
+                case 'i':
+                    io_print_i(va_arg(args, int));
+                    break;
+                case 'o':
+                    io_print_o(va_arg(args, int));
+                    break;
+                case 's':
+                    io_printf(va_arg(args, char*));
+                    break;
+                case 'u':
+                    io_print_u(va_arg(args, unsigned int));
+                    break;
+                case 'x':
+                    io_print_x(va_arg(args, int));
+                    break;
+                case '%':
+                    io_put_char('%');
+                    break;
+                default:
+                    // TODO: Maybe throw an error?
+                    break;
+            }
+        } else {
+            io_put_char(format[index]);
+        }
+        index++;
+    }
 }
 
 void io_cursor_enable(unsigned char start, unsigned char end) {

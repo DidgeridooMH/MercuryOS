@@ -4,8 +4,9 @@ FLAGS=-std=gnu99 -ffreestanding -Wall -Wextra -masm=intel
 BUILD_PATH=../../build/obj
 
 all: $(BUILD_PATH)/io.o $(BUILD_PATH)/keyboard.o
+	make -C ./ata
 
-$(BUILD_PATH)/io.o: io.c io.h
+$(BUILD_PATH)/io.o: io.c io.h ../runtime/stdarg.h ../runtime/itoa.h ../kernel/memory/mmu.h
 	@echo "Compiling io.c"
 	$(C) -c io.c -o $(BUILD_PATH)/io.o $(FLAGS)
 

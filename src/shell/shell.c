@@ -4,6 +4,7 @@
 #include "../drivers/keyboard.h"
 #include "../runtime/string.h"
 #include "../drivers/io.h"
+#include "../drivers/ata/ata.h"
 #include "../runtime/itoa.h"
 #include "../kernel/acpi/acpi.h"
 
@@ -32,7 +33,7 @@ void shell_prompt() {
   memset(command, 0, 256);
   int command_index = 0;
   command[0] = '\0';
-  io_printf(">");
+  io_printf("$>");
 
   int processed = 0;
   while(!processed){
@@ -60,8 +61,22 @@ void shell_prompt() {
   }
 }
 
+void shell_drive_info() {
+    ata_report_devices();
+}
+
 void program_load_test() {
-    
+    // char prog[6] = { 0xB8, 0x02, 0x00, 0x00, 0x00, 0xC3 };
+    // void *block = kmalloc(sizeof(prog));
+    // memcpy(block, prog, sizeof(prog));
+    //
+    // int i = ((int(*)())block)();
+    // if(i == 2) {
+    //     io_printf("YEEAASSS\n");
+    // }
+    //
+    // kfree(block);
+    // ata_identify_command();
 }
 
 void shell_process_command(char* command) {
@@ -69,6 +84,8 @@ void shell_process_command(char* command) {
         shell_shutdown();
     } else if(strcmp(command, "test") == 0) {
         program_load_test();
+    } else if(strcmp(command, "driveinfo") == 0) {
+        shell_drive_info();
     } else {
         io_printf("Unable to execute command ");
         io_printf(command);

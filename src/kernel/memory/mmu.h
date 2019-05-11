@@ -44,4 +44,8 @@ void disable_paging();
 
 void* get_next_available_virtual_address();
 
+void *kmalloc(size_t size);
+
+void kfree(void *address);
+
 #endif
