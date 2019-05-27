@@ -62,10 +62,6 @@ void shell_prompt() {
     }
 }
 
-/*
- * :BUG: When deallocating larger than page memory locations when other memory
- * is allocated.
- */
 void program_load_test() {
     struct ata_device device;
     device.bus_mode = PRIMARY_BUS;
