@@ -138,10 +138,9 @@ void io_print_u(unsigned int u) {
 }
 
 void io_print_x(int x) {
-    char* num = kmalloc(32);
+    char num[32];
     itoa(num, x, 16);
     io_printf(num);
-    kfree(num);
 }
 
 void io_printf(char* format, ...) {

@@ -73,26 +73,17 @@ void program_load_test() {
     device.type = ata_detect_dev_type(&device);
 
     unsigned char *buf = kmalloc(ATAPI_SECTOR_SIZE);
-    // atapi_read_sector(&device, 0, buf);
+    atapi_read_sector(&device, 0, buf);
 
-    // for (int i = 0; i < 2; i++)
-    // {
-    //   int cur = buf[i];
-    //   io_printf("%x ", cur);
-    //   if (i % 16 == 15)
-    //   {
-    // io_printf("\n");
-    //   }
-    // }
-    void *ptr1 = kmalloc(32);
-    memset(ptr1, 0xEB, 16);
-    kfree(ptr1);
-    void *ptr2 = kmalloc(32);
-    // memset(ptr2, 0xEB, 16);
-    io_printf("THESE ARE THE REAL CHECKPOINTS\n");
-    kfree(ptr2);
+    for (int i = 0; i < 64; i++) {
+        int cur = buf[i];
+        io_printf("%x ", cur);
+        if (i % 16 == 15) {
+            io_printf("\n");
+        }
+    }
 
-    // kfree(buf);
+    kfree(buf);
 }
 
 void shell_process_command(char *command) {

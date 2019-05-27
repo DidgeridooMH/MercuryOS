@@ -2,7 +2,7 @@
 #include "../../drivers/io.h"
 #include "../../runtime/itoa.h"
 #include "../../runtime/string.h"
-#include "../memory/mmu.h"
+#include "../memory/paging.h"
 
 struct rsdp_descriptor* acpi_get_rsd_ptr() {
     map_page_pse((void*)0, (void*)0, 2);

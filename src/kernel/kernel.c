@@ -10,6 +10,9 @@
 #define MAJOR_VERSION 0
 #define MINOR_VERSION 2
 
+#define STACK_ADDRESS 0xFFFF0000
+#define STACK_LIMIT 0xFFFF0FF0
+
 int kmain() {
     io_init();
     io_printf("Video context loaded\n");
@@ -27,9 +30,6 @@ int kmain() {
     keyboard_install();
     io_printf("Keyboard irq initialized\n");
 
-    paging_load();
-    io_printf("Paging enabled\n");
-
     memory_init();
     io_printf("Memory allocation has been established...\n");
 
@@ -45,6 +45,11 @@ int kmain() {
         "===================================================\n");
     io_printf("Version: %d.%d\n", MAJOR_VERSION, MINOR_VERSION);
     io_set_color(TTY_COLOR_WHITE, TTY_COLOR_BLACK);
+
+    void *stack_ptr = allocate_frame();
+    map_page(stack_ptr, STACK_ADDRESS, 2);
+
+    asm("mov %%esp, %0" : : "dN"(STACK_LIMIT));
 
     asm("sti");
 

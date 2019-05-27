@@ -2,6 +2,7 @@
 #include "../../../drivers/io.h"
 #include "../../../runtime/itoa.h"
 #include "../../../runtime/memory.h"
+#include "../../../runtime/string.h"
 #include "../../interrupts/system_calls.h"
 #include "interrupts.h"
 #include "system.h"
@@ -168,21 +169,57 @@ void irq_handler(struct regs *r) {
     io_outportb(0x20, 0x20);
 }
 
+/* Manually convert to string. This because the system is already in an error
+ * state. */
+static void print_register(unsigned int reg) {
+    char value[16];
+    itoa(value, reg, 16);
+    io_printf("0x");
+
+    for (int i = 8 - strlen(value); i > 0; i--) {
+        io_printf("0");
+    }
+
+    io_printf(value);
+    io_printf(" ");
+}
+
+static void dump_registers(struct regs *r) {
+    io_printf("\n\n====== Register Dump ======\n");
+    io_printf("EAX======= EBX======= ECX======= EDX======= ");
+    io_printf("EDI======= DSI=======\n");
+
+    print_register(r->eax);
+    print_register(r->ebx);
+    print_register(r->ecx);
+    print_register(r->edx);
+    print_register(r->edi);
+    print_register(r->esi);
+
+    io_printf("\nEBP======= ESP======= GS======== FS======== ");
+    io_printf("ES======== DS======== EIP======= \n");
+
+    print_register(r->ebp);
+    print_register(r->esp);
+    print_register(r->gs);
+    print_register(r->fs);
+    print_register(r->es);
+    print_register(r->ds);
+    print_register(r->eip);
+
+    io_printf("\n\n");
+}
+
 void fault_handler(struct regs *r) {
     if (r->int_no < 32) {
         io_printf("\n");
-        if (r->int_no > 18) {
-            io_printf(exception_messages[19]);
-        } else if (r->int_no == 14) {
-            io_printf(exception_messages[14]);
+        io_printf(exception_messages[r->int_no]);
+        dump_registers(r);
+        if (r->int_no == 14) {
             io_printf(page_fault_messages[r->ebx]);
-        } else {
-            io_printf(exception_messages[r->int_no]);
         }
-
         io_printf("\nSystem Halted!\n");
+        while (1)
+            ;
     }
-
-    while (1)
-        ;
 }
