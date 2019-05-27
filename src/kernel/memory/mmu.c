@@ -31,7 +31,7 @@ struct memory_context {
 };
 
 static struct memory_context kernel_context;
-static struct frame_header   kernel_frame_head;
+static struct frame_header kernel_frame_head;
 
 void memory_init() {
     setup_frame_alloc();
@@ -49,11 +49,11 @@ void setup_frame_alloc() {
     unsigned char *frames_ptr = (void *)FRAME_MAP_ADDRESS;
 
     // 4mb -> 4194304bytes / 1024 = 4096kb / 4 = 1024
-    for(int i = 0; i < PREFILL_FRAMES; i++) {
+    for (int i = 0; i < PREFILL_FRAMES; i++) {
         frames_ptr[i] = 1;
     }
 
-    for(int i = PREFILL_FRAMES; i < TOTAL_MEMORY_PAGES; i++) {
+    for (int i = PREFILL_FRAMES; i < TOTAL_MEMORY_PAGES; i++) {
         frames_ptr[i] = 0;
     }
 }
@@ -70,8 +70,8 @@ void *get_next_available_frame() {
     unsigned int frame = 0;
     unsigned char *frames_ptr = (void *)FRAME_MAP_ADDRESS;
 
-    for(int i = 0; i < TOTAL_MEMORY_PAGES && !frame; i++) {
-        if(!frames_ptr[i]) {
+    for (int i = 0; i < TOTAL_MEMORY_PAGES && !frame; i++) {
+        if (!frames_ptr[i]) {
             frame = i;
         }
     }
@@ -98,74 +98,86 @@ void deallocate_frame(void *address) {
 }
 
 void paging_load() {
-    unsigned int* page_directory = (unsigned int*)PAGE_DIR_ADDRESS;
+    unsigned int *page_directory = (unsigned int *)PAGE_DIR_ADDRESS;
 
-    for(int i = 0; i < 0x400; i++) {
+    for (int i = 0; i < 0x400; i++) {
         // Each table is 1024 entries * 4 bytes. The 2 marks it R/W.
         page_directory[i] = 2;
     }
 
-    for(int i = 0; i <= 0x1400000; i += 0x400000) {
+    for (int i = 0; i <= 0x1400000; i += 0x400000) {
         map_page_pse(i, 0xC0000000 + i, 2);
     }
 
     enable_paging();
 }
 
-void map_page_pse(void* physical_address, void* virtual_address, unsigned int flags) {
-    unsigned int page_dir_index = (unsigned int) virtual_address / 0x400000;
+void map_page_pse(void *physical_address, void *virtual_address,
+                  unsigned int flags) {
+    unsigned int page_dir_index = (unsigned int)virtual_address / 0x400000;
 
-    unsigned int* page_dir = (unsigned int*)(PAGE_DIR_ADDRESS);
+    unsigned int *page_dir = (unsigned int *)(PAGE_DIR_ADDRESS);
 
-    if(page_dir[page_dir_index] & 1) {
-        io_printf("Paging error: pse index already assigned...we should do something about that\n");
+    if (page_dir[page_dir_index] & 1) {
+        io_printf(
+            "Paging error: pse index already assigned...we should do something "
+            "about that\n");
     }
     page_dir[page_dir_index] = (unsigned int)physical_address | 0x81 | flags;
     asm("mov eax, 0 \n \
          invlpg byte ptr [eax]");
 }
 
-void unmap_page_pse(void* virtual_address) {
+void unmap_page_pse(void *virtual_address) {
     unsigned int page_dir_index = (unsigned int)virtual_address >> 22;
-    unsigned int* page_dir = (unsigned int*)PAGE_DIR_ADDRESS;
+    unsigned int *page_dir = (unsigned int *)PAGE_DIR_ADDRESS;
     page_dir[page_dir_index] = 0x2;
 
     asm("mov eax, 0 \n \
          invlpg byte ptr [eax]");
 }
 
-void map_page(void* physical_address, void* virtual_address, unsigned int flags) {
+void map_page(void *physical_address, void *virtual_address,
+              unsigned int flags) {
     unsigned int page_dir_index = (unsigned int)virtual_address / 0x400000;
-    unsigned int page_table_index = ((unsigned int)virtual_address >> 12) & 0x3FF;
+    unsigned int page_table_index =
+        ((unsigned int)virtual_address >> 12) & 0x3FF;
 
-    unsigned int* page_dir = (unsigned int*)(PAGE_DIR_ADDRESS);
-    unsigned int* page_table = (unsigned int*)(PAGE_TABLE_ADDRESS + 0x1000 * page_dir_index);
-    unsigned int* page_table_phys = (unsigned int*)(0x400000 + 0x1000 * page_dir_index);
+    unsigned int *page_dir = (unsigned int *)(PAGE_DIR_ADDRESS);
+    unsigned int *page_table =
+        (unsigned int *)(PAGE_TABLE_ADDRESS + 0x1000 * page_dir_index);
+    unsigned int *page_table_phys =
+        (unsigned int *)(0x400000 + 0x1000 * page_dir_index);
 
     // Check if the page directory entry is present. If not, create a new table.
-    if(!(page_dir[page_dir_index] & 1)) {
-        for(int i = 0; i < 0x400; i++) {
+    if (!(page_dir[page_dir_index] & 1)) {
+        for (int i = 0; i < 0x400; i++) {
             // Mark not present
             page_table[i] = 2;
         }
         page_dir[page_dir_index] = (unsigned int)page_table_phys | 3;
     }
 
-    if(page_table[page_table_index] & 1) {
-        io_printf("Paging error: page table already assigned...we should do something about that\n");
+    if (page_table[page_table_index] & 1) {
+        io_printf(
+            "Paging error: page table already assigned...we should do "
+            "something about that\n");
         return;
     }
 
-    page_table[page_table_index] = ((unsigned int) physical_address) | (flags & 0xFFF) | 0x01;
+    page_table[page_table_index] =
+        ((unsigned int)physical_address) | (flags & 0xFFF) | 0x01;
 
     asm("mov eax, 0 \n \
          invlpg byte ptr [eax]");
 }
 
-void unmap_page(void* virtual_address) {
+void unmap_page(void *virtual_address) {
     unsigned int page_dir_index = (unsigned int)virtual_address / 0x400000;
-    unsigned int page_table_index = ((unsigned int)virtual_address >> 12) & 0x3FF;
-    unsigned int* page_table = (unsigned int*)(PAGE_TABLE_ADDRESS + 0x1000 * page_dir_index);
+    unsigned int page_table_index =
+        ((unsigned int)virtual_address >> 12) & 0x3FF;
+    unsigned int *page_table =
+        (unsigned int *)(PAGE_TABLE_ADDRESS + 0x1000 * page_dir_index);
     page_table[page_table_index] = 0;
 
     asm("mov eax, 0 \n \
@@ -188,18 +200,19 @@ void disable_paging() {
          mov cr3, eax               \n ");
 }
 
-void* get_next_available_virtual_frame(unsigned int count) {
+void *get_next_available_virtual_frame(unsigned int count) {
     unsigned int cur_count = 0;
     void *address = NULL;
-    for(int i = 3; i < 1024; i++) {
-        unsigned int* table_ptr = (unsigned int*)(PAGE_TABLE_ADDRESS + 0x1000 * i);
-        for(int j = 0; j < 1024; j++) {
-            if(!(table_ptr[j] & 1)) {
-                if(cur_count == 0) {
-                    address = (void*)(0x400000 * i + j * 0x1000);
+    for (int i = 3; i < 1024; i++) {
+        unsigned int *table_ptr =
+            (unsigned int *)(PAGE_TABLE_ADDRESS + 0x1000 * i);
+        for (int j = 0; j < 1024; j++) {
+            if (!(table_ptr[j] & 1)) {
+                if (cur_count == 0) {
+                    address = (void *)(0x400000 * i + j * 0x1000);
                 }
                 cur_count++;
-                if(cur_count == count) {
+                if (cur_count == count) {
                     return address;
                 }
             } else {
@@ -209,7 +222,7 @@ void* get_next_available_virtual_frame(unsigned int count) {
         }
     }
 
-    return (void*)(0);
+    return (void *)(0);
 }
 
 void *allocate_vframe() {
@@ -222,48 +235,46 @@ void *allocate_vframe() {
 
 void *allocate_contiguous_vframe(size_t size) {
     unsigned int num_of_frames = (size / FRAME_SIZE);
-    if(size % FRAME_SIZE) {
+    if (size % FRAME_SIZE) {
         num_of_frames++;
     }
     void *vframe = get_next_available_virtual_frame(num_of_frames);
 
-    for(int i = 0; i < num_of_frames; i++) {
+    for (int i = 0; i < num_of_frames; i++) {
         map_page(allocate_frame(), vframe + FRAME_SIZE * i, 2);
     }
 
     return vframe;
 }
 
-void deallocate_vframe(void *vframe) {
-    unmap_page(vframe);
-}
+void deallocate_vframe(void *vframe) { unmap_page(vframe); }
 
 void deallocate_contiguous_vframe(void *vframe, size_t size) {
     unsigned int num_of_frames = (size / FRAME_SIZE);
-    if(size % FRAME_SIZE) {
+    if (size % FRAME_SIZE) {
         num_of_frames++;
     }
 
-    for(int i = 0; i < num_of_frames; i++) {
+    for (int i = 0; i < num_of_frames; i++) {
         unmap_page(vframe + FRAME_SIZE * i);
     }
 }
 
 struct frame_header *create_kernel_frame(size_t size) {
     size_t normalized_size = (size / FRAME_SIZE);
-    if(size % FRAME_SIZE) {
+    if (size % FRAME_SIZE) {
         normalized_size++;
     }
     normalized_size *= FRAME_SIZE;
 
     struct frame_header *next_free = kernel_context.frames;
-    while(next_free->next != NULL) {
+    while (next_free->next != NULL) {
         next_free = next_free->next;
     }
 
     struct frame_info *info_frame = allocate_vframe();
     void *data_frame;
-    if(size < FRAME_SIZE) {
+    if (size < FRAME_SIZE) {
         data_frame = allocate_vframe();
     } else {
         data_frame = allocate_contiguous_vframe(size);
@@ -287,7 +298,7 @@ struct frame_header *create_kernel_frame(size_t size) {
 }
 
 struct allocate_info *find_next_junk(struct allocate_info *head) {
-    while(head->used != -1 && head->junk == 0) {
+    while (head->used != -1 && head->junk == 0) {
         head++;
     }
     return head;
@@ -297,12 +308,12 @@ int get_available_allocation(struct frame_header *header, size_t size) {
     struct allocate_info *alloc_info = header->alloc_addr;
     struct allocate_info *available = NULL;
 
-    if(alloc_info == NULL) {
+    if (alloc_info == NULL) {
         return NULL;
     }
 
-    while(available == NULL && alloc_info->used != -1) {
-        if(alloc_info->size >= size && alloc_info->used == 0) {
+    while (available == NULL && alloc_info->used != -1) {
+        if (alloc_info->size >= size && alloc_info->used == 0) {
             available = alloc_info;
         }
         alloc_info++;
@@ -311,24 +322,24 @@ int get_available_allocation(struct frame_header *header, size_t size) {
 }
 
 void *kmalloc(size_t size) {
-    if(size == 0) {
+    if (size == 0) {
         return (void *)(0);
     }
 
     /* TODO: should check for being kernel. Who really needs security B) */
     struct frame_header *header = kernel_context.frames;
     struct allocate_info *available = NULL;
-    while(header != NULL && available == NULL) {
+    while (header != NULL && available == NULL) {
         available = get_available_allocation(header, size);
         header = header->next;
     }
 
-    if(header == NULL) {
+    if (header == NULL) {
         header = create_kernel_frame(size);
         available = get_available_allocation(header, size);
     }
 
-    if(available == NULL || available->used == -1) {
+    if (available == NULL || available->used == -1) {
         io_printf("Error: Out of memory...\n");
         return (void *)(0);
     }
@@ -336,7 +347,7 @@ void *kmalloc(size_t size) {
     available->used = 1;
 
     struct allocate_info *next = find_next_junk(header->alloc_addr);
-    if(next->used == -1) {
+    if (next->used == -1) {
         (next + 1)->used = -1;
     }
     next->used = 0;
@@ -350,16 +361,15 @@ void *kmalloc(size_t size) {
 
 void merge_postfix(struct allocate_info *head, struct allocate_info *current) {
     void *next_address = current->address + current->size;
-    while(head->used != -1
-        && head->address != next_address
-        || head->used != 0
-        || head->junk != 0){
+
+    while (head->used != -1 && (head->address != next_address ||
+                                head->used != 0 || head->junk != 0)) {
         head++;
     }
 
-    if(head->used != -1) {
+    if (head->used != -1) {
         current->size += head->size;
-        if((head + 1)->used == -1) {
+        if ((head + 1)->used == -1) {
             head->used = -1;
         } else {
             head->junk = 1;
@@ -369,17 +379,15 @@ void merge_postfix(struct allocate_info *head, struct allocate_info *current) {
 
 void merge_prefix(struct allocate_info *head, struct allocate_info *current) {
     void *next_address = current->address;
-    while(head->used != -1
-        && ((head->address + head->size) != next_address
-        || head->used != 0
-        || head->junk != 0)) {
+    while (head->used != -1 && ((head->address + head->size) != next_address ||
+                                head->used != 0 || head->junk != 0)) {
         head++;
     }
 
-    if(head->used != -1) {
+    if (head->used != -1) {
         current->address = head->address;
         current->size += head->size;
-        if((head + 1)->used == -1) {
+        if ((head + 1)->used == -1) {
             head->used = -1;
         } else {
             head->junk = 1;
@@ -387,24 +395,27 @@ void merge_prefix(struct allocate_info *head, struct allocate_info *current) {
     }
 }
 
-void merge_free_blocks(struct allocate_info *head, struct allocate_info *current) {
+void merge_free_blocks(struct allocate_info *head,
+                       struct allocate_info *current) {
     merge_postfix(head, current);
     merge_prefix(head, current);
 }
 
 void kfree(void *address) {
-    if(address == NULL) {
+    if (address == NULL) {
         return;
     }
 
     // Look for correct frame of memory.
     struct frame_header *head = kernel_context.frames;
-    while(head != NULL && (head->frame_addr != ((unsigned int)address & 0xFFFFF000))) {
+    while (head != NULL &&
+           (head->frame_addr != ((unsigned int)address & 0xFFFFF000))) {
         head = head->next;
     }
+    io_printf("CHECKPOINT\n");
 
     // Throw error if frame is unavailable.
-    if(head == NULL) {
+    if (head == NULL) {
         io_printf("Error: Freeing unavailable memory...\n");
         return;
     }
@@ -412,27 +423,33 @@ void kfree(void *address) {
     // Look for correct alloaction.
     struct allocate_info *alloc_frame = head->alloc_addr;
 
-    while(alloc_frame->used != -1
-        && (alloc_frame->address != address
-        || alloc_frame->used != 1
-        || alloc_frame->junk != 0)) {
-            alloc_frame++;
+    io_printf("CHECKPOINT\n");
+
+    while (alloc_frame->used != -1 &&
+           (alloc_frame->address != address || alloc_frame->used != 1 ||
+            alloc_frame->junk != 0)) {
+        alloc_frame++;
     }
 
+    io_printf("CHECKPOINT\n");
+
     // Throw error if allocation is unavailable.
-    if(alloc_frame->used == -1) {
+    if (alloc_frame->used == -1) {
         io_printf("Error: Freeing unavailable memory...\n");
         return;
     }
+
+    io_printf("CHECKPOINT\n");
 
     // Free the memory and merge with surrounding blocks.
     alloc_frame->used = 0;
     merge_free_blocks(head->alloc_addr, alloc_frame);
 
+    io_printf("CHECKPOINT\n");
     // Check for frame deallocation.
-    if(head->alloc_addr->used == 0 && (head->alloc_addr + 1)->used == -1) {
+    if (head->alloc_addr->used == 0 && (head->alloc_addr + 1)->used == -1) {
         head->prev->next = head->next;
-        if(head->next != NULL) {
+        if (head->next != NULL) {
             head->next->prev = head->prev;
         }
         size_t size = head->alloc_addr->size;

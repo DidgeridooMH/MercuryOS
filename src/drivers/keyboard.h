@@ -4,12 +4,12 @@
 #include "../kernel/arch/x86/x86.h"
 
 struct keyboard_flags {
-  unsigned char shift;
-  unsigned char ctrl;
-  unsigned char alt;
-  unsigned char caps_lock;
-  unsigned char num_lock;
-  unsigned char scroll_lock;
+    unsigned char shift;
+    unsigned char ctrl;
+    unsigned char alt;
+    unsigned char caps_lock;
+    unsigned char num_lock;
+    unsigned char scroll_lock;
 };
 
 void keyboard_handler(struct regs* r);

@@ -1,10 +1,10 @@
 #include "../drivers/io.h"
+#include "../drivers/keyboard.h"
+#include "../runtime/itoa.h"
+#include "../shell/shell.h"
 #include "arch/x86/x86.h"
 #include "interrupts/system_calls.h"
 #include "interrupts/timer.h"
-#include "../drivers/keyboard.h"
-#include "../shell/shell.h"
-#include "../runtime/itoa.h"
 #include "memory/mmu.h"
 
 #define MAJOR_VERSION 0
@@ -35,19 +35,20 @@ int kmain() {
 
     io_clear_screen();
     io_set_color(TTY_COLOR_LIGHT_CYAN, TTY_COLOR_BLACK);
-    io_printf("===================================================\n"
-              " _____                                _____  _____ \n"
-              "|     | ___  ___  ___  _ _  ___  _ _ |     ||   __|\n"
-              "| | | || -_||  _||  _|| | ||  _|| | ||  |  ||__   |\n"
-              "|_|_|_||___||_|  |___||___||_|  |_  ||_____||_____|\n"
-              "                                |___|\n"
-              "===================================================\n");
+    io_printf(
+        "===================================================\n"
+        " _____                                _____  _____ \n"
+        "|     | ___  ___  ___  _ _  ___  _ _ |     ||   __|\n"
+        "| | | || -_||  _||  _|| | ||  _|| | ||  |  ||__   |\n"
+        "|_|_|_||___||_|  |___||___||_|  |_  ||_____||_____|\n"
+        "                                |___|              \n"
+        "===================================================\n");
     io_printf("Version: %d.%d\n", MAJOR_VERSION, MINOR_VERSION);
     io_set_color(TTY_COLOR_WHITE, TTY_COLOR_BLACK);
 
     asm("sti");
 
-    while(1) {
+    while (1) {
         shell_prompt();
     }
 

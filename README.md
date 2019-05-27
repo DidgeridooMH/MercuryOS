@@ -5,12 +5,15 @@
 Mercury OS is a simple operating system used to learn about the different concepts of OS design. It is written using C and Assembly and compiled using GCC. The kernel is loaded using GRUB. The objective is to make a lightweight, extensible platform that can run simple applications at high speeds.
 
 ## Requirements
+
 ### Installing:
+
 - 32-bit Processor or higher
 
 - 1GB of RAM
 
 ### Developing:
+
 - GCC configured toolchain
 
 - LD linker
@@ -20,9 +23,11 @@ Mercury OS is a simple operating system used to learn about the different concep
 - QEMU or Bochs
 
 ## Building
+
 Build a tool chain as described by the OSDev wiki: [OSDev Wiki](http://wiki.osdev.org/Bare_Bones).
 
 To get nasm on linux systems use
+
 ```
 sudo apt-get install nasm
 ```
@@ -32,30 +37,34 @@ Windows and MacOS sources and binaries are avaliable at [Nasm](http://www.nasm.u
 To build use the makefile at the root directory.
 
 Qemu can be used by executing
+
 ```
 make run-qemu
 ```
+
 Bochs is recommended for debugging and can be used with
+
 ```
 make run-bochs
 ```
 
 ## Features
-- [X] Bootable image
 
-- [X] Basic terminal output
+- [x] Bootable image
 
-- [X] GDT implementation
+- [x] Basic terminal output
 
-- [X] IRS implementation
+- [x] GDT implementation
 
-- [X] IRQ implementation
+- [x] IRS implementation
 
-- [X] Basic keyboard driver
+- [x] IRQ implementation
 
-- [X] Basic Timer
+- [x] Basic keyboard driver
 
-- [X] Refine keyboard driver
+- [x] Basic Timer
+
+- [x] Refine keyboard driver
 
 - [ ] Extend and refine I/O drivers (Centralized Input and Output Function)
 

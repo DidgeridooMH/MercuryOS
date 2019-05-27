@@ -53,33 +53,29 @@ void isr31();
 
 void irq_handler(struct regs *r);
 
-void(*irq_routines[16])(struct regs*) = {
-  0, 0, 0, 0, 0, 0, 0, 0,
-  0, 0, 0, 0, 0, 0, 0, 0
-};
+void (*irq_routines[16])(struct regs *) = {0, 0, 0, 0, 0, 0, 0, 0,
+                                           0, 0, 0, 0, 0, 0, 0, 0};
 
-const char *exception_messages[] = {
-  "Division by Zero",
-  "Debug Exception",
-  "Non Maskable Interrupt Exception",
-  "Breakpoint Exception",
-  "Into Detected Overflow Exception",
-  "Out of Bounds Exception",
-  "Invalid Opcode Exception",
-  "No Coprocessor Exception",
-  "Double Fault Exception",
-  "Coprocessor Segment Overrun Exception",
-  "Bad TSS Exception",
-  "Segment Not Present Exception",
-  "Stack Fault Exception",
-  "General Protection Fault Exception",
-  "Page Fault Exception",
-  "Unknown Interrupt Exception",
-  "Coprocessor Fault Exception",
-  "Alignment Check Exception (486+)",
-  "Machine Check Exception (Pentium/586+)",
-  "Reserved"
-};
+const char *exception_messages[] = {"Division by Zero",
+                                    "Debug Exception",
+                                    "Non Maskable Interrupt Exception",
+                                    "Breakpoint Exception",
+                                    "Into Detected Overflow Exception",
+                                    "Out of Bounds Exception",
+                                    "Invalid Opcode Exception",
+                                    "No Coprocessor Exception",
+                                    "Double Fault Exception",
+                                    "Coprocessor Segment Overrun Exception",
+                                    "Bad TSS Exception",
+                                    "Segment Not Present Exception",
+                                    "Stack Fault Exception",
+                                    "General Protection Fault Exception",
+                                    "Page Fault Exception",
+                                    "Unknown Interrupt Exception",
+                                    "Coprocessor Fault Exception",
+                                    "Alignment Check Exception (486+)",
+                                    "Machine Check Exception (Pentium/586+)",
+                                    "Reserved"};
 
 const char *page_fault_messages[] = {
     "Supervisory process tried to read a non-present page entry",
